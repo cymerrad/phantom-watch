@@ -16,4 +16,4 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class WebPageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = WebPage
-        fields = ("created", "url")#, "requestedBy")  
+        fields = ("created", "url", "user")  
