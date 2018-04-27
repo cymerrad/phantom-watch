@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-# from service.models import WebPage
+from service.models import WebPage
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -13,7 +13,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ('url', 'name')
 
-# class WebPageSerializer(serializers.HyperlinkedModelSerializer):
-#     class Meta:
-#         # model = WebPage
-#         fields = ("created", "url", "requestedBy")  
+class WebPageSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = WebPage
+        fields = ("created", "url")#, "requestedBy")  
