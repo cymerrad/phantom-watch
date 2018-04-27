@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screenshot As A Service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+</head>
+<body class="w3-theme-l4">
+  <div class="my-box w3-container w3-content" style="max-width:800px">
+    <div class="w3-container">
+      {% if error_msg %}
+        <div class="w3-panel w3-white w3-card w3-display-container">
+          <p>{{ error_msg }}</p>
+        </div>
+      {% endif %}
+
+      {% for test in test_array %}
+        <div class="w3-panel w3-white w3-card w3-display-container">
+          <p>{{ test }}</p>
+        </div>
+      {% endfor %}
+
+      <form action="/request">
+        <div class="w3-panel w3-white w3-card w3-display-container">
+          <p>
+            <label>Links separated by new lines</label>
+            <textarea title="links" class="w3-input" type="text" style="height:400px; resize: none;"></textarea>
+          </p>
+        </div>
+        <div class="w3-panel w3-white w3-card w3-display-container">
+          <p>
+            <label>E-mail address to send a link to, when download is ready</label>
+            <input title="email" class="w3-input" type="text">
+          </p>
+        </div>
+        <button type="submit" class="w3-btn w3-blue">Submit</button>
+      </form>
+
+    </div>
+  </div>
+</body>
+</html>
