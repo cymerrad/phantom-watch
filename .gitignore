@@ -1,0 +1,9 @@
+.idea
+.vscode
+local
+node_modules
+*.exe
+env
+*.pyc
+*.pyo
+*.py~
