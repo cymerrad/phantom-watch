@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "C:\\Users\\radek\\AppData\\Local\\Programs\\Python\\Python36\\python.exe",
+    "git.ignoreLimitWarning": true,
+    "python.linting.pylintPath": "C:\\Users\\radek\\Documents\\Web\\phantom-watch\\env\\Scripts\\pylint.exe"
+}

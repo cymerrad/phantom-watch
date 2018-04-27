@@ -1,5 +1,4 @@
 .idea
-.vscode
 local
 node_modules
 *.exe
