@@ -12,6 +12,7 @@ from rest_framework import status
 from django.http import Http404
 from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import permissions
 
 
 class UserList(generics.ListCreateAPIView):
@@ -38,12 +39,16 @@ class WebpageOrderList(mixins.ListModelMixin,
     """
     queryset = WebpageOrder.objects.all()
     serializer_class = WebpageOrderSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class WebpageOrderDetail(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
@@ -54,6 +59,7 @@ class WebpageOrderDetail(mixins.RetrieveModelMixin,
     """
     queryset = WebpageOrder.objects.all()
     serializer_class = WebpageOrderSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

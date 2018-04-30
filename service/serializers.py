@@ -16,8 +16,8 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class WebpageOrderSerializer(serializers.Serializer):
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+class WebpageOrderSerializer(serializers.Serializer): 
+    user = serializers.ReadOnlyField(source='user.username')
     url = serializers.URLField(required=True)
 
     def create(self, validated_data):
@@ -25,3 +25,7 @@ class WebpageOrderSerializer(serializers.Serializer):
         Create and return a new `Snippet` instance, given the validated data.
         """
         return WebpageOrder.objects.create(**validated_data)
+
+    class Meta:
+        model = WebpageOrder
+        fields = ('created', 'url', 'user')
