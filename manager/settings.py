@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'service.apps.ServiceConfig',
+    'daemon.apps.DaemonConfig',
 ]
 
 MIDDLEWARE = [

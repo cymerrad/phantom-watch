@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from service.models import WebpageOrder
+from daemon.models import Picture
 
 class UserSerializer(serializers.ModelSerializer):
     orders = serializers.PrimaryKeyRelatedField(many=True, queryset=WebpageOrder.objects.all())
@@ -19,6 +20,7 @@ class GroupSerializer(serializers.ModelSerializer):
 class WebpageOrderSerializer(serializers.Serializer): 
     owner = serializers.ReadOnlyField(source='owner.username')
     url = serializers.URLField(required=True)
+    pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
 
     def create(self, validated_data):
         """
@@ -28,4 +30,4 @@ class WebpageOrderSerializer(serializers.Serializer):
 
     class Meta:
         model = WebpageOrder
-        fields = ('created', 'url', 'owner')
+        fields = ('created', 'url', 'owner', 'pictures')

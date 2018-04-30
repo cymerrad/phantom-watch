@@ -12,6 +12,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. Postawić minimalne api do zarządzania treścią bazy danych
 1. Zrobić daemona do robienia screenshotów używającego tego co już kiedyś napisałem
     - PhantomJS w repo lub instalacja gdzieś
+    - Celery
 1. Front
 
 # Start-up
@@ -21,6 +22,4 @@ source env/bin/activate
 
 pip install django
 pip install djangorestframework
-pip install pygments  # We'll be using this for the code highlighting
-
 ```
