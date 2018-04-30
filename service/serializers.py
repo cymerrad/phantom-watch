@@ -1,20 +1,22 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from service.models import WebPage
+from service.models import WebpageOrder
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    orders = serializers.PrimaryKeyRelatedField(many=True, queryset=WebpageOrder.objects.all())
+
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
+        fields = ('id', 'username', 'orders')
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
-        fields = ('url', 'name')
+        fields = ('id', 'name')
 
 
-class WebPageSerializer(serializers.Serializer):
+class WebpageOrderSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     url = serializers.URLField(required=True)
 
@@ -22,4 +24,4 @@ class WebPageSerializer(serializers.Serializer):
         """
         Create and return a new `Snippet` instance, given the validated data.
         """
-        return WebPage.objects.create(**validated_data)
+        return WebpageOrder.objects.create(**validated_data)
