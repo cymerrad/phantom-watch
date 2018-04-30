@@ -17,15 +17,15 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class WebpageOrderSerializer(serializers.Serializer): 
-    user = serializers.ReadOnlyField(source='user.username')
+    owner = serializers.ReadOnlyField(source='owner.username')
     url = serializers.URLField(required=True)
 
     def create(self, validated_data):
         """
-        Create and return a new `Snippet` instance, given the validated data.
+        Create and return a new `WebpageOrder` instance, given the validated data.
         """
         return WebpageOrder.objects.create(**validated_data)
 
     class Meta:
         model = WebpageOrder
-        fields = ('created', 'url', 'user')
+        fields = ('created', 'url', 'owner')
