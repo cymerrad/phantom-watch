@@ -7,4 +7,5 @@ env
 *.pyo
 *.py~
 .vscode
+.vscode/*
 *.sqlite3

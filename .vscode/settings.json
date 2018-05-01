@@ -1,8 +1,0 @@
-{
-    "python.pythonPath": "${workspaceFolder}\\env\\Scripts\\python.exe",
-    "git.ignoreLimitWarning": true,
-    "python.linting.pylintPath": "C:\\Users\\UW\\Documents\\Web\\phantom-watch\\env\\Scripts\\pylint.exe",
-    "python.linting.pylintArgs": [
-        "--load-plugins=pylint_django",
-    ],
-}

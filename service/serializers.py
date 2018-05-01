@@ -31,3 +31,5 @@ class WebpageOrderSerializer(serializers.Serializer):
     class Meta:
         model = WebpageOrder
         fields = ('created', 'url', 'owner', 'pictures')
+
+    
