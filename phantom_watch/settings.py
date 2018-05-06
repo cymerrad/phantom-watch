@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'manager.urls'
+ROOT_URLCONF = 'phantom_watch.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'manager.wsgi.application'
+WSGI_APPLICATION = 'phantom_watch.wsgi.application'
 
 
 # Database
