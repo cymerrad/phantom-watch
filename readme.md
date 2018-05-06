@@ -14,6 +14,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - PhantomJS w repo lub instalacja gdzieś
     - Celery
 1. Front
+1. RabbitMQ
 
 # Start-up
 ```
