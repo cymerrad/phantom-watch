@@ -3,4 +3,4 @@ djangorestframework
 sqlalchemy
 celery
 Pillow
-mysqlclient
+# mysqlclient
