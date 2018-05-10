@@ -5,3 +5,4 @@ celery
 Pillow
 # mysqlclient
 django-celery-beat
+django-extensions

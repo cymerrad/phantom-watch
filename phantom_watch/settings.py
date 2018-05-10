@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'service.apps.ServiceConfig',
     'daemon.apps.DaemonConfig',
     'django_celery_beat',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

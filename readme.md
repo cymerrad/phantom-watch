@@ -26,19 +26,21 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 virtualenv env
 source env/bin/activate
 
-sudo apt install libmysqlclient-dev
+sudo apt install -y libmysqlclient-dev mysql-client
 pip install -r requirements.txt
 
-python manage.py makemigrations && python manage.py migrate --run-syncdb
-celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabseScheduler
+cd mysql; docker-compose up -d; cd ..
+
+python manage.py makemigrations service
+python manage.py makemigrations daemon
+python manage.py migrate service
+python manage.py migrate --run-syncdb
+python manage.py loaddata users
+celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 python manage.py runserver
 ```
 
-## Other
+## Links with some downloads
 
 http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~bionic_amd64.deb
 https://www.rabbitmq.com/install-debian.html
-
-```Shell
-docker run --name=mysql1 -d mysql/mysql-server
-```
