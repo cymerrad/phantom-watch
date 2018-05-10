@@ -26,8 +26,11 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 virtualenv env
 source env/bin/activate
 
-pip install django
-pip install djangorestframework
+pip install -r requirements.txt
+
+python manage.py makemigrations && python manage.py migrate --run-syncdb
+celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabseScheduler
+python manage.py runserver
 ```
 
 ## Other
