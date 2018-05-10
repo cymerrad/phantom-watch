@@ -1,0 +1,1 @@
+sudo docker run --name=mysql1 -d -e MYSQL_ROOT_PASSWORD=password,MYSQL_DATABASE=service,MYSQL_USER=user,MYSQL_PASSWORD=password mysql:5.7.22
