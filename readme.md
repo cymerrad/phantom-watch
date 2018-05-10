@@ -10,11 +10,11 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 - Jeden serwis zajmuje się kontrolowaniem zawartości bazy danych z użytkownikami, zadaniami i screenshotami
 - Drugi żyje sobie w tle, wykonuje zadania, o których dowiaduje się z bazy danych i dodaje do niej efekty swojej pracy
 - Jakiś minimalny front w czymkolwiek... Pewnie w html'u by wykorzystać template'y Django
-- Prawodopodobnie apka będzize działać na Dockerze i spróbuję uniknąć Nginxa
+- Spróbuję uniknąć Nginxa i zwyczajowego ohydnego set-up'u
 
 ## TODO
 
-1. Postawić minimalne api do zarządzania treścią bazy danych
+1. ~~Postawić minimalne api do zarządzania treścią bazy danych~~
 1. Zrobić daemona do robienia screenshotów używającego tego co już kiedyś napisałem
     - PhantomJS w repo lub instalacja gdzieś
     - Celery

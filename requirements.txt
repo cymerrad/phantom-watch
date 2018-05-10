@@ -1,8 +1,7 @@
 django
 djangorestframework
-sqlalchemy
 celery
 Pillow
-# mysqlclient
+mysqlclient
 django-celery-beat
 django-extensions
