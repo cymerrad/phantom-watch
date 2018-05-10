@@ -9,3 +9,4 @@ env
 .vscode
 .vscode/*
 *.sqlite3
+*.pid

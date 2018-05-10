@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'service.apps.ServiceConfig',
     'daemon.apps.DaemonConfig',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [

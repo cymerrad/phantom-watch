@@ -4,3 +4,4 @@ sqlalchemy
 celery
 Pillow
 # mysqlclient
+django-celery-beat

@@ -19,7 +19,6 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - PhantomJS w repo lub instalacja gdzieś
     - Celery
 1. Front
-1. RabbitMQ
 
 ## Start-up
 
@@ -30,3 +29,8 @@ source env/bin/activate
 pip install django
 pip install djangorestframework
 ```
+
+## Other
+
+http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~bionic_amd64.deb
+https://www.rabbitmq.com/install-debian.html
