@@ -1,2 +1,2 @@
 #!/bin/bash
-./docker_force_kill.sh $(sudo docker ps | grep mysql1 | cut -d' ' -f1)
+sudo docker ps | awk '{if(NR>1)print}' | cut -d' ' -f1 | while read line; do ./force_kill_container.sh $line; sleep 1; sudo docker rm $line; done
