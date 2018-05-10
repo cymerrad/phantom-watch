@@ -26,6 +26,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 virtualenv env
 source env/bin/activate
 
+sudo apt install libmysqlclient-dev
 pip install -r requirements.txt
 
 python manage.py makemigrations && python manage.py migrate --run-syncdb
@@ -37,3 +38,7 @@ python manage.py runserver
 
 http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~bionic_amd64.deb
 https://www.rabbitmq.com/install-debian.html
+
+```Shell
+docker run --name=mysql1 -d mysql/mysql-server
+```
