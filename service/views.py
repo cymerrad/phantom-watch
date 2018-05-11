@@ -76,6 +76,12 @@ class PictureDetail(mixins.RetrieveModelMixin,
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+        # picture = self.get_object(pk)
+        # serializer = PictureSerializer(picture, data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return Response(serializer.data)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

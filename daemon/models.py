@@ -26,7 +26,5 @@ class Picture(models.Model):
     original_filename = models.TextField("Original filename", default="")
     description = models.TextField("Description of the uploaded image", default="")
 
-    def __str__(self):
-        return self.original_filename
 
     
