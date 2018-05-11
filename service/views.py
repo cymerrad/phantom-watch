@@ -49,7 +49,7 @@ class PictureList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   generics.GenericAPIView):
     """
-    List all Webpages, or create a new Webpage.
+    List all Pictures, or create a new Picture.
     """
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer
@@ -66,7 +66,7 @@ class PictureDetail(mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
                     generics.GenericAPIView):
     """
-    Retrieve, update or delete a Webpage.
+    Retrieve, update or delete a Picture.
     """
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer

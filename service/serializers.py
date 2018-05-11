@@ -4,10 +4,11 @@ from service.models import WebpageOrder
 from daemon.models import Picture
 
 class UserSerializer(serializers.ModelSerializer):
-    orders = serializers.PrimaryKeyRelatedField(many=True, queryset=WebpageOrder.objects.all())
+    # orders = serializers.PrimaryKeyRelatedField(many=True, queryset=WebpageOrder.objects.all())
 
     class Meta:
         model = User
+        depth = 1
         fields = ('id', 'username', 'orders')
 
 
@@ -18,6 +19,7 @@ class GroupSerializer(serializers.ModelSerializer):
 
 
 class WebpageOrderSerializer(serializers.Serializer): 
+    id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
     url = serializers.URLField(required=True)
     pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
@@ -30,7 +32,8 @@ class WebpageOrderSerializer(serializers.Serializer):
 
     class Meta:
         model = WebpageOrder
-        fields = ('created', 'url', 'owner', 'pictures')
+        depth = 1
+        fields = ('id', 'created', 'url', 'owner', 'pictures')
 
 class PictureSerializer(serializers.ModelSerializer):
     """
