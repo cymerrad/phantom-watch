@@ -36,7 +36,8 @@ python manage.py makemigrations daemon
 python manage.py migrate service
 python manage.py migrate --run-syncdb
 python manage.py loaddata users
-celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler &
+celery -A phantom_watch worker -l info &
 python manage.py runserver
 ```
 
