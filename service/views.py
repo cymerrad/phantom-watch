@@ -2,15 +2,15 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from service.serializers import UserSerializer, GroupSerializer, WebpageOrderSerializer
+from service.serializers import UserSerializer, GroupSerializer, WebpageOrderSerializer, PictureSerializer
 from service.models import WebpageOrder
-from rest_framework import mixins
-from rest_framework import generics
-from rest_framework import permissions
+from daemon.models import Picture
+from rest_framework import mixins, generics, permissions, renderers
 from service.permissions import IsOwnerOrReadOnly
-from rest_framework import renderers
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from django.views.decorators.csrf import csrf_exempt
+
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -44,3 +44,39 @@ class WebpageViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+class PictureList(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    """
+    List all Webpages, or create a new Webpage.
+    """
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @csrf_exempt
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+class PictureDetail(mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    """
+    Retrieve, update or delete a Webpage.
+    """
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+

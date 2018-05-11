@@ -32,4 +32,12 @@ class WebpageOrderSerializer(serializers.Serializer):
         model = WebpageOrder
         fields = ('created', 'url', 'owner', 'pictures')
 
-    
+class PictureSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the Picture Model
+    """
+    class Meta:
+        model = Picture
+        fields = ('pk', 'pic', 'original_filename', 'description', )
+        read_only_fields = ('order', )
+
