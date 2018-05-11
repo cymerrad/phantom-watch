@@ -3,6 +3,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 from uuid import uuid4
+import logging
+from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 def scramble_uploaded_filename(instance, filename):
     """
@@ -12,12 +16,11 @@ def scramble_uploaded_filename(instance, filename):
     :return:
     """
     extension = filename.split(".")[-1]
-    return "{}.{}".format(uuid4(), extension)
+    return '{}.{}'.format(uuid4(), extension)
 
 # Create your models here.
 class Picture(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    # pic = models.ImageField(upload_to='pic_folder/')
     pic = models.ImageField("Uploaded image", upload_to=scramble_uploaded_filename)
     order = models.ForeignKey('service.WebpageOrder', related_name='pictures', on_delete=models.CASCADE)
     original_filename = models.TextField("Original filename", default="")
