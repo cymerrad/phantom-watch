@@ -41,6 +41,6 @@ class PictureSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Picture
-        fields = ('pk', 'pic', 'original_filename', 'description', )
-        read_only_fields = ('order', )
+        fields = ('id', 'pic', 'description', 'order')
+        read_only_fields = ('original_filename', )
 

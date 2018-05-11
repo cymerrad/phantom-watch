@@ -134,6 +134,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, '..', 'uploaded_media')
+MEDIA_URL = '/media/'
+
 # Celery
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 
