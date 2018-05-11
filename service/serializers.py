@@ -18,11 +18,11 @@ class GroupSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class WebpageOrderSerializer(serializers.Serializer): 
+class WebpageOrderSerializer(serializers.ModelSerializer): 
     id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
     url = serializers.URLField(required=True)
-    pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
+    # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
 
     def create(self, validated_data):
         """
