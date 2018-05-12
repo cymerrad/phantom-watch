@@ -5,3 +5,4 @@ Pillow
 mysqlclient
 django-celery-beat
 django-extensions
+sqlalchemy
