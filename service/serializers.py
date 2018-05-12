@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
 from service.models import WebpageOrder
-from daemon.models import Picture
 
 class UserSerializer(serializers.ModelSerializer):
     # orders = serializers.PrimaryKeyRelatedField(many=True, queryset=WebpageOrder.objects.all())
@@ -34,13 +33,3 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
         model = WebpageOrder
         depth = 1
         fields = ('id', 'created', 'url', 'owner', 'pictures')
-
-class PictureSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Picture Model
-    """
-    class Meta:
-        model = Picture
-        fields = ('id', 'pic', 'description', 'order')
-        read_only_fields = ('original_filename', )
-
