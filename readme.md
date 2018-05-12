@@ -21,7 +21,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. Front
 
 ## Start-up
-
+Works on Ubuntu 18
 ```Shell
 virtualenv -p python3 env
 source env/bin/activate
@@ -49,6 +49,9 @@ python manage.py loaddata users webpages
 celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler &
 celery -A phantom_watch worker -l info &
 python manage.py runserver
+
+# connect to mysql
+mysql service -h 127.0.0.1 -u django -pdjango
 ```
 
 ## Links with some downloads
