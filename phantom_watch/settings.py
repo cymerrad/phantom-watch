@@ -145,3 +145,8 @@ CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
 CELERY_TASK_SERIALIZER = 'json'
+
+# Screenshotting
+PHANTOMJS_BIN = os.path.join(BASE_DIR, 'daemon/webscreenshot/phantomjs-2.1.1-linux-x86_64/bin/phantomjs')
+WEBSCREENSHOT_JS = os.path.join(BASE_DIR, 'daemon/webscreenshot/webscreenshot.js')
+SCREENSHOTS_DIRECTORY = '/tmp/'

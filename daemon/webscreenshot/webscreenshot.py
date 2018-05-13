@@ -70,7 +70,7 @@ parser.option_groups.extend([main_grp, proc_grp, http_grp, conn_grp])
 
 # phantomjs binary, hoping to find it in a $PATH directory
 ## Be free to change it to your own full-path location 
-PHANTOMJS_BIN = 'phantomjs'
+PHANTOMJS_BIN = './phantomjs-2.1.1-linux-x86_64/bin/phantomjs'
 WEBSCREENSHOT_JS = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), './webscreenshot.js'))
 SCREENSHOTS_DIRECTORY = os.path.abspath(os.path.join(os.getcwdu(), './screenshots/'))
 
