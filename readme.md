@@ -38,6 +38,8 @@ curl -L http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_gener
 curl -L https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.5/rabbitmq-server_3.7.5-1_all.deb -o /tmp/rabbitmq.deb
 sudo dpkg -i /tmp/esl-erlang.deb
 sudo dpkg -i /tmp/rabbitmq.deb
+curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -o /tmp/phantomjs.tar.bz2
+tar -xf /tmp/phantomjs.tar.bz2 -C daemon/webscreenshot/
 
 python manage.py makemigrations service
 python manage.py makemigrations daemon
