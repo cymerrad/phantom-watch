@@ -32,4 +32,4 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'url', 'owner', 'pictures')
+        fields = ('id', 'created', 'url', 'owner', 'pictures', 'crontab')
