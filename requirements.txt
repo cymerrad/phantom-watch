@@ -6,3 +6,4 @@ mysqlclient
 django-celery-beat
 django-extensions
 sqlalchemy
+croniter
