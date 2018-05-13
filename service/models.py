@@ -13,7 +13,7 @@ def validate_crontab(ctab: str):
     if not croniter.is_valid(ctab):
         raise ValidationError(
             _('%(value)s is not a valid UNIX crontab entry'),
-            params={'value': value},
+            params={'value': ctab},
         )
     
 def parse_crontab(ctab: str):
