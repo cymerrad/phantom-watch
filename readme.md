@@ -19,9 +19,12 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - ~~PhantomJS w repo lub instalacja gdzieś~~
     - ~~Celery~~
 1. Front
+1. CAS?
 
 ## Start-up
+
 Works on Ubuntu 18
+
 ```Shell
 virtualenv -p python3 env
 source env/bin/activate
@@ -62,7 +65,12 @@ http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-e
 https://www.rabbitmq.com/install-debian.html
 
 ## Libraries documentation & tutorials
+
 https://pypi.org/project/django_celery_beat/
 http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
 https://simpleisbetterthancomplex.com/tutorial/2017/08/20/how-to-use-celery-with-django.html
 http://www.django-rest-framework.org/tutorial/4-authentication-and-permissions/
+
+## Minor TODO's
+
+1. Think of something small to do or fix

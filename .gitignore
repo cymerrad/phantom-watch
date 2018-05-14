@@ -9,5 +9,6 @@ env
 .vscode
 .vscode/*
 *.sqlite3
+*.sqlite
 *.pid
 uploaded_media/*

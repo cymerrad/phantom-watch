@@ -22,7 +22,6 @@ def parse_crontab(ctab: str):
     return {'minute':spl[0], 'hour':spl[1], 'day_of_month':spl[2], 'month_of_year':spl[3], 'day_of_week':spl[4]}
 
 class WebpageOrder(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     url = models.CharField(max_length=2083, blank=False, validators=[URLValidator])
     owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE)
@@ -44,7 +43,6 @@ class WebpageOrder(models.Model):
             task='daemon.tasks.take_screenshot',
             args=json.dumps([self.url, self.pk]),
             kwargs=json.dumps(parsed),
-            # expires=datetime.utcnow() + timedelta(minutes=5)
         )
 
 
