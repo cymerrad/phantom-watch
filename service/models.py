@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from croniter import croniter
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import URLValidator
 
 def validate_crontab(ctab: str):
     if not croniter.is_valid(ctab):
@@ -23,7 +24,7 @@ def parse_crontab(ctab: str):
 class WebpageOrder(models.Model):
     # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
-    url = models.CharField(max_length=2083, blank=False)
+    url = models.CharField(max_length=2083, blank=False, validators=[URLValidator])
     owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE)
     crontab = models.CharField(max_length=50, blank=False, validators=[validate_crontab])
 
@@ -31,6 +32,7 @@ class WebpageOrder(models.Model):
         """
         When created/updated create/update an order in Celery's crontab
         """
+        super(WebpageOrder, self).save(*args, **kwargs)
 
         parsed = parse_crontab(self.crontab)
         schedule, _ = CrontabSchedule.objects.get_or_create(
@@ -38,14 +40,14 @@ class WebpageOrder(models.Model):
         )
         PeriodicTask.objects.create(
             crontab=schedule,
-            name='Test',
-            task='daemon.tasks.test_task',
-            args=json.dumps(['arg1', 'arg2']),
+            name=self.pk,
+            task='daemon.tasks.take_screenshot',
+            args=json.dumps([self.url, self.pk]),
             kwargs=json.dumps(parsed),
-            expires=datetime.utcnow() + timedelta(minutes=5)
+            # expires=datetime.utcnow() + timedelta(minutes=5)
         )
 
-        super(WebpageOrder, self).save(*args, **kwargs)
+
     
     class Meta:
         ordering = ('created',) 

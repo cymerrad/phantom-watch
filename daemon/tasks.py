@@ -13,7 +13,8 @@ import os
 import subprocess
 import errno
 from daemon.models import Picture
-from django.core.files import File as DjangoFile
+from django.core.files.images import ImageFile as DjangoImage
+from django.core.files.uploadedfile import UploadedFile
 
 @shared_task
 def get_all_orders():
@@ -31,7 +32,7 @@ SHELL_EXECUTION_ERROR = -1
 PHANTOMJS_HTTP_AUTH_ERROR_CODE = 2
 
 @shared_task
-def take_screenshot(webpage_url, webpage_order):
+def take_screenshot(webpage_url, webpage_order_id, **kwargs):
     output_filename = os.path.join(settings.SCREENSHOTS_DIRECTORY, ('%s.png' % uuid4()))
     cmd_parameters = [ settings.PHANTOMJS_BIN,
                     '--ignore-ssl-errors true',
@@ -44,7 +45,8 @@ def take_screenshot(webpage_url, webpage_order):
     # constants in code (Y)
     timeout = 30
     logger_url = logging.getLogger('django')
-
+    start = datetime.datetime.now()
+    
     try:
         p = subprocess.Popen(shlex.split(cmd), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
@@ -81,18 +83,26 @@ def take_screenshot(webpage_url, webpage_order):
             logger_url.info("Screenshot OK\n")
 
             ### SAVE TO DB
-            with open(output_filename, "r") as fp:
-                wrapped_file = DjangoFile(f)
-                pic = Picture(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
-                    description="Screenshot of {} from {}".format(webpage_url, datetime.datetime.now()))
-                pic.save()
+            try:
+                webpage_order = WebpageOrder.objects.get(id=webpage_order_id)
+
+                with open(output_filename, "rb") as fp:
+                    wrapped_file = UploadedFile(fp)
+                    pic = Picture(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
+                        description="Screenshot of {} from {}".format(webpage_url, datetime.datetime.now()))
+                    pic.save()
+            except Exception as e:
+                logger_url.error("Reading the screenshot: {}".format(e))
             ###
 
             return SHELL_EXECUTION_OK
     
     except Exception as e:
-        if e.errno and e.errno == errno.ENOENT :
-            logger_url.error('phantomjs binary could not have been found in your current PATH environment variable, exiting')
+        try:
+            if e.errno and e.errno == errno.ENOENT :
+                logger_url.error('phantomjs binary could not have been found in your current PATH environment variable, exiting')
+        except AttributeError as e:
+            pass
         else:
             logger_url.error('Unknown error: %s, exiting' % e )
         return SHELL_EXECUTION_ERROR
