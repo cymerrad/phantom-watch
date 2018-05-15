@@ -26,21 +26,23 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 Works on Ubuntu 18
 
 ```Shell
-sudo apt install -y virtualenv python3-dev
+sudo apt install -y virtualenv python3-dev build-essential
 virtualenv -p python3 env
 source env/bin/activate
 
 sudo apt install -y libmysqlclient-dev mysql-client
 pip install -r requirements.txt
 
-curl -L https://download.docker.com/linux/debian/dists/$(cat /etc/debian_version | cut -d'/' -f1)/pool/stable/amd64/docker-ce_18.03.1~ce-0~debian_amd64.deb -o /tmp/docker.deb && \
-sudo dpkg -i /tmp/docker.deb && \
-sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose && \
-sudo chmod +x /usr/local/bin/docker-compose && \
-cd mysql; sudo docker-compose up -d; cd .. || \ # if something failed (compose up probably) then give up and install mysql like a pleb
-sudo ./mysql/mysql-setup.sh && \
-sudo mysql_secure_installation && \
-mysql -h 127.0.0.1 -u root -p < mysql/init.sql
+sudo apt --fix-broken install -y
+
+cd mysql;
+echo "MySQL in [D]ocker or [r]egular?"
+select yn in "Docker" "Regular"; do
+    case $yn in
+        [Dd]* ) ./docker-setup.sh; break;;
+        [Rr]* ) ./mysql-setup.sh; break;;
+    esac
+done
 
 curl -L http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~bionic_amd64.deb -o /tmp/esl-erlang.deb
 curl -L https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.5/rabbitmq-server_3.7.5-1_all.deb -o /tmp/rabbitmq.deb
