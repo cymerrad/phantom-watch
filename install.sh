@@ -1,4 +1,3 @@
-sudo locale-gen pl_PL; sudo locale-gen pl_PL.UTF-8; sudo update-locale;
 sudo apt install -y virtualenv python3-dev build-essential
 virtualenv -p python3 env
 source env/bin/activate
