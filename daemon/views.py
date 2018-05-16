@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rest_framework import mixins, generics
-from daemon.models import Picture
-from daemon.serializers import PictureSerializer
+from daemon.models import Picture, WebpageOrder
+from daemon.serializers import PictureSerializer, WebpageOrderSerializer
+from rest_framework import mixins, generics, permissions, renderers
+from daemon.permissions import IsOwnerOrReadOnly
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework import viewsets
 
 class PictureList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
@@ -38,3 +43,22 @@ class PictureDetail(mixins.RetrieveModelMixin,
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
+
+class WebpageViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = WebpageOrder.objects.all()
+    serializer_class = WebpageOrderSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                            IsOwnerOrReadOnly,)
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def show(self, request, *args, **kwargs):
+        webpage = self.get_object()
+        return Response(webpage.pictures)
+
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

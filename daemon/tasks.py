@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from service.models import WebpageOrder
+from daemon.models import WebpageOrder, Picture
 from uuid import uuid4
 from django.conf import settings
 import logging
@@ -12,7 +12,6 @@ import time
 import os
 import subprocess
 import errno
-from daemon.models import Picture
 from django.core.files.images import ImageFile as DjangoImage
 from django.core.files.uploadedfile import UploadedFile
 

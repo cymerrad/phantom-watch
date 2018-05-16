@@ -75,4 +75,4 @@ https://pypi.org/project/django_celery_beat/
 http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html
 https://simpleisbetterthancomplex.com/tutorial/2017/08/20/how-to-use-celery-with-django.html
 http://www.django-rest-framework.org/tutorial/4-authentication-and-permissions/
-
+https://www.digitalocean.com/community/tutorials/how-to-serve-django-applications-with-apache-and-mod_wsgi-on-debian-8

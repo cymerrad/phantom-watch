@@ -2,14 +2,7 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from service.serializers import UserSerializer, GroupSerializer, WebpageOrderSerializer
-from service.models import WebpageOrder
-from rest_framework import mixins, generics, permissions, renderers
-from service.permissions import IsOwnerOrReadOnly
-from rest_framework.response import Response
-from rest_framework.decorators import action
-from django.views.decorators.csrf import csrf_exempt
-
+from service.serializers import UserSerializer, GroupSerializer
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -24,22 +17,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
-class WebpageViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = WebpageOrder.objects.all()
-    serializer_class = WebpageOrderSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                            IsOwnerOrReadOnly,)
-
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    def show(self, request, *args, **kwargs):
-        webpage = self.get_object()
-        return Response(webpage.pictures)
-
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
