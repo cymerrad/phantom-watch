@@ -13,4 +13,4 @@ env
 *.pid
 uploaded_media/*
 static/
-**/migrations
+migrations/
