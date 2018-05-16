@@ -44,10 +44,11 @@ select yn in "Docker" "Regular"; do
     esac
 done
 
-curl -L http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~bionic_amd64.deb -o /tmp/esl-erlang.deb
+curl -L http://packages.erlang-solutions.com/site/esl/esl-erlang/FLAVOUR_1_general/esl-erlang_20.3-1~ubuntu~$(lsb_release -c | cut -f2)_amd64.deb -o /tmp/esl-erlang.deb
 curl -L https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.5/rabbitmq-server_3.7.5-1_all.deb -o /tmp/rabbitmq.deb
 sudo dpkg -i /tmp/esl-erlang.deb
 sudo dpkg -i /tmp/rabbitmq.deb
+sudo apt --fix-broken -y install
 curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -o /tmp/phantomjs.tar.bz2
 tar -xf /tmp/phantomjs.tar.bz2 -C daemon/webscreenshot/
 
