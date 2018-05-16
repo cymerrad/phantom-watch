@@ -35,9 +35,6 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^', include('service.urls')),
     url(r'^', include('daemon.urls')),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
-    # url(r'^accounts/login$', django_cas_ng.views.login, name='cas_ng_login'),
-    # url(r'^accounts/logout$', django_cas_ng.views.logout, name='cas_ng_logout'),
-    # url(r'^accounts/callback$', django_cas_ng.views.callback, name='cas_ng_proxy_callback'),
+    url(r'^api-auth/', include('service.cas', namespace='rest_framework')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
