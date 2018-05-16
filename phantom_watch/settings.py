@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '&)f-%)6g8i@7jelg#1@+#=x5&5lx8_!bm89nw#!^#l^qs$5wdz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '127.0.1.1', '10.12.3.238']
+ALLOWED_HOSTS = ['127.0.0.1', '127.0.1.1']
 
 
 # Application definition
@@ -73,17 +73,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'phantom_watch.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 
 DATABASES = {
     'default': {
