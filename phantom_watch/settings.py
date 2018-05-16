@@ -24,6 +24,7 @@ SECRET_KEY = '&)f-%)6g8i@7jelg#1@+#=x5&5lx8_!bm89nw#!^#l^qs$5wdz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CAS_UW = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '127.0.1.1', 'localhost']
 
@@ -55,12 +56,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_cas_ng.backends.CASBackend',
-)
-
-CAS_SERVER_URL = 'https://test.logowanie.uw.edu.pl/cas/'
+if CAS_UW:
+    AUTHENTICATION_BACKENDS = [
+        'django.contrib.auth.backends.ModelBackend',
+        'django_cas_ng.backends.CASBackend',
+    ]
+    CAS_SERVER_URL = 'https://test.logowanie.uw.edu.pl/cas/'
 
 ROOT_URLCONF = 'phantom_watch.urls'
 

@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^', include('service.urls')),
     url(r'^', include('daemon.urls')),
-    url(r'^api-auth/', include('service.cas', namespace='rest_framework')),
+    url(r'^auth/', include('service.cas', namespace='rest_framework')) if settings.CAS_UW 
+        else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
