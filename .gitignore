@@ -12,3 +12,4 @@ env
 *.sqlite
 *.pid
 uploaded_media/*
+static/
