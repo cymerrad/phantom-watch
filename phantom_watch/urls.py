@@ -19,22 +19,15 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from rest_framework import routers
-from daemon import views as views_d
-from service import views
+from daemon import urls as urls_d
+from service import urls as urls_s
 import django_cas_ng.views as views_ng
 
-router = routers.DefaultRouter()
-router.register(r'groups', views.GroupViewSet)
-router.register(r'users', views.UserViewSet)
-router.register(r'webpages', views_d.WebpageViewSet)
-
 # Wire up our API using automatic URL routing.
-# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^', include(router.urls)),
-    url(r'^', include('service.urls')),
-    url(r'^', include('daemon.urls')),
+    url(r'^', include(urls_s.router.urls)),
+    url(r'^api/', include('daemon.urls')),
     url(r'^auth/', include('service.cas', namespace='rest_framework')) if settings.CAS_UW 
         else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     

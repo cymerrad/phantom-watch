@@ -15,7 +15,7 @@ class PictureSerializer(serializers.ModelSerializer):
 class WebpageOrderSerializer(serializers.ModelSerializer): 
     id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
-    url = serializers.URLField(required=True)
+    url_addr = serializers.URLField(required=True)
     # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
 
     def create(self, validated_data):
@@ -27,4 +27,4 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'url', 'owner', 'pictures', 'crontab')
+        fields = ('id', 'created', 'url_addr', 'owner', 'pictures', 'crontab')

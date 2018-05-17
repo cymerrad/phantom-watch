@@ -15,16 +15,6 @@ import errno
 from django.core.files.images import ImageFile as DjangoImage
 from django.core.files.uploadedfile import UploadedFile
 
-@shared_task
-def get_all_orders():
-    orders = WebpageOrder.objects.all()
-    return orders
-
-@shared_task
-def test_task(arg1, arg2, **kwargs):
-    print("Argument 1: {}; argument 2: {}, rest: {}".format(arg1, arg2, kwargs))
-    return
-
 # Macros
 SHELL_EXECUTION_OK = 0
 SHELL_EXECUTION_ERROR = -1

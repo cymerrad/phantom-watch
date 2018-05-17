@@ -69,6 +69,10 @@ python manage.py runserver
 
 # connect to mysql
 mysql service -h 127.0.0.1 -u django -pdjango
+
+# lol
+ rm -rf daemon/migrations; yes yes | .anage.py reset_db; ./manage.py makemigrations daemon; ./manage.py migrate --run-syncdb; ./manage.py loaddata users;
+
 ```
 
 ## Libraries documentation & tutorials
