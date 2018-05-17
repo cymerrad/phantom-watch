@@ -23,6 +23,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. Django production settings
 1. OK permissions system
 1. Ansible
+1. Parameters passed to phantom (like resolution, username/password for a page)
 
 ## Start-up
 
