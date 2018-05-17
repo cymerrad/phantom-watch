@@ -7,3 +7,4 @@ django-celery-beat
 django-extensions
 sqlalchemy
 croniter
+django-cas-ng

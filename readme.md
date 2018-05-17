@@ -19,8 +19,9 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - ~~PhantomJS w repo lub instalacja gdzieś~~
     - ~~Celery~~
 1. Front
-1. CAS
+1. ~~CAS~~
 1. Django production settings
+1. OK permissions system
 1. Ansible
 
 ## Start-up
