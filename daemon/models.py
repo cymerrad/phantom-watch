@@ -79,8 +79,9 @@ class WebpageOrder(models.Model):
 
     def delete(self, *args, **kwargs):
         sch = self.schedule
-        self.delete()
         sch.terminate()
+        super(WebpageOrder, self).delete(*args, **kwargs)
+
     
     class Meta:
         ordering = ('created',) 
