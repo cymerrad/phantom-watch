@@ -118,7 +118,7 @@ class TaskScheduler(models.Model):
         return TaskScheduler.objects.create(periodic_task=ptask)
 
     @staticmethod
-    def schedule_cron(task_name, crontable, args=None, kwargs=None):
+    def schedule_cron(task_name, crontable, args, kwargs=None):
         """
         Schedules a task using UNIX cron table. E.g. "* * * * *" is every minute, "0 * * * *" every hour with 0 minutes.
         Idk, google it or read a manual for it.
@@ -132,9 +132,8 @@ class TaskScheduler(models.Model):
             crontab=schedule,
             name=ptask_name,
             task=task_name,
+            args=json.dumps(args)
         )
-        if args:
-            ptask.args = args
         if kwargs:
             ptask.kwargs = kwargs
         ptask.save()

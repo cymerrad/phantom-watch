@@ -23,11 +23,12 @@ from daemon import urls as urls_d
 from service import urls as urls_s
 import django_cas_ng.views as views_ng
 
-# Wire up our API using automatic URL routing.
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include(urls_s.router.urls)),
     url(r'^api/', include('daemon.urls')),
+    # url(r'^api/', include(urls_d.router.urls)),
     url(r'^auth/', include('service.cas', namespace='rest_framework')) if settings.CAS_UW 
         else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
     
