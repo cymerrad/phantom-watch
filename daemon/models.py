@@ -132,7 +132,7 @@ class TaskScheduler(models.Model):
             crontab=schedule,
             name=ptask_name,
             task=task_name,
-            args=json.dumps(args)
+            args=json.dumps([args[0], args[1]]),
         )
         if kwargs:
             ptask.kwargs = kwargs
