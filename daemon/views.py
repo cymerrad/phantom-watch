@@ -54,10 +54,10 @@ class WebpageViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                             IsOwnerOrReadOnly,)
 
-    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    # def show(self, request, *args, **kwargs):
-    #     webpage = self.get_object()
-    #     return Response(webpage.pictures)
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def show(self, request, *args, **kwargs):
+        webpage = self.get_object()
+        return Response(webpage.pictures)
 
 
     def perform_create(self, serializer):
@@ -82,7 +82,7 @@ class WebpageList(mixins.ListModelMixin,
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
-                
+
 
 class WebpageDetail(mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
