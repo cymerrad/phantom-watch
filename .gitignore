@@ -11,6 +11,6 @@ env
 *.sqlite3
 *.sqlite
 *.pid
-uploaded_media/*
+media/*
 static/
 migrations/
