@@ -12,5 +12,5 @@ env
 *.sqlite
 *.pid
 media/*
-static/
+static/*
 migrations/

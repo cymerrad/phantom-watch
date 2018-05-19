@@ -63,7 +63,18 @@ python manage.py migrate service
 python manage.py migrate --run-syncdb
 python manage.py loaddata users webpages
 
-# finally run three services
+# prod
+sudo chown -R root:root etc django_host.conf
+sudo chmod +x etc/init.d/celery*
+sudo cp -r etc/* etc
+sudo /etc/init.d/celeryd start && sudo /etc/init.d/celerybeat start
+
+sudo apt install apache2
+sudo cp django_host.conf /etc/apache2/sites-available/
+sudo a2ensite django_host.conf
+sudo systemctl restart apache2
+
+# dev
 celery -A phantom_watch beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler & celery -A phantom_watch worker -l info &
 python manage.py runserver
 
