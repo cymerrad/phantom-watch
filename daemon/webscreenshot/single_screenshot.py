@@ -6,6 +6,7 @@ import time
 import os
 import subprocess
 import errno
+from django.conf import settings
 
 # Macros
 SHELL_EXECUTION_OK = 0
@@ -13,7 +14,14 @@ SHELL_EXECUTION_ERROR = -1
 PHANTOMJS_HTTP_AUTH_ERROR_CODE = 2
 
 logger_url = logging.getLogger('django')
-def with_timeout(output_filename, timeout):
+def with_timeout(output_filename, webpage_url, timeout):
+    cmd_parameters = [ settings.PHANTOMJS_BIN,
+        '--ignore-ssl-errors true',
+        '--ssl-protocol any',
+        '--ssl-ciphers ALL'
+    ]
+    cmd_parameters.append('"%s" url_capture="%s" output_file="%s"' % (settings.WEBSCREENSHOT_JS, webpage_url, output_filename))
+    cmd = " ".join(cmd_parameters)
     start = datetime.datetime.now()
     try:
         p = subprocess.Popen(shlex.split(cmd), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

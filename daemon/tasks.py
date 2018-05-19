@@ -7,26 +7,21 @@ from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
 from django.core.files.uploadedfile import UploadedFile
 from daemon.webscreenshot import single_screenshot
+import datetime
 import logging
+import os
 
 logger = logging.getLogger('django')
 
 @shared_task
 def take_screenshot(webpage_url, webpage_order_id, **kwargs):
     output_filename = os.path.join(settings.SCREENSHOTS_DIRECTORY, ('%s.png' % uuid4()))
-    cmd_parameters = [ settings.PHANTOMJS_BIN,
-                    '--ignore-ssl-errors true',
-                    '--ssl-protocol any',
-                    '--ssl-ciphers ALL'
-    ]
-    cmd_parameters.append('"%s" url_capture="%s" output_file="%s"' % (settings.WEBSCREENSHOT_JS, webpage_url, output_filename))
-    cmd = " ".join(cmd_parameters)
 
     # constants in code (Y)
     timeout = 30
 
     try:
-        result = single_screenshot.with_timeout(output_filename, timeout)
+        result = single_screenshot.with_timeout(output_filename, webpage_url, timeout)
     except Exception as e:
         logger.error("Screenshot script raised an exception: {}".format(e))
 
