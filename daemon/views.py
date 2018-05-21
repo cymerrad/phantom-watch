@@ -17,9 +17,6 @@ class PictureViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Picture.objects.all()
     serializer_class = PictureSerializer
-    @action(detail=True, url_name='picture-detail')
-    def show(self, *args, **kwargs):
-        return super(PictureViewSet, self).get(args, kwargs)
 
 class WebpageViewSet(viewsets.ModelViewSet):
     """
@@ -83,8 +80,7 @@ class PictureDetail(mixins.RetrieveModelMixin,
 
 class WebpageList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
-                  generics.GenericAPIView,
-                  viewsets.ViewSetMixin):
+                  generics.GenericAPIView):
     """
     List all Webpages, or create a new Webpage.
     """
