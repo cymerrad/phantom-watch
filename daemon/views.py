@@ -9,6 +9,42 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import viewsets
 
+class PictureViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Retrieve pictures
+    """
+    queryset = Picture.objects.all()
+    serializer_class = PictureSerializer
+    @action(detail=True, url_name='picture-detail')
+    def show(self, *args, **kwargs):
+        return super(PictureViewSet, self).get(args, kwargs)
+
+class WebpageViewSet(viewsets.ModelViewSet):
+    """
+    This viewset automatically provides `list`, `create`, `retrieve`,
+    `update` and `destroy` actions.
+    """
+    queryset = WebpageOrder.objects.all()
+    serializer_class = WebpageOrderSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                            IsOwnerOrReadOnly,)
+
+    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    def show(self, request, *args, **kwargs):
+        webpage = self.get_object()
+        return Response(webpage.pictures)
+
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+#
+#
+#
+# in case anything down here becomes useful later
+# just remember about viewset.ViewSetMixin
+
 class PictureList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
                   generics.GenericAPIView):
@@ -42,27 +78,6 @@ class PictureDetail(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
-
-
-class WebpageViewSet(viewsets.ModelViewSet):
-    """
-    This viewset automatically provides `list`, `create`, `retrieve`,
-    `update` and `destroy` actions.
-    """
-    queryset = WebpageOrder.objects.all()
-    serializer_class = WebpageOrderSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
-                            IsOwnerOrReadOnly,)
-
-    @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
-    def show(self, request, *args, **kwargs):
-        webpage = self.get_object()
-        return Response(webpage.pictures)
-
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
 
 class WebpageList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,

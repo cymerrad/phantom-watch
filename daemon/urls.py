@@ -5,6 +5,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'webpages', views.WebpageViewSet)
+router.register(r'pictures', views.PictureViewSet)
 
 urlpatterns = [
     url(r'^pictures/$', views.PictureList.as_view()),

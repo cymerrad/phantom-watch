@@ -17,6 +17,7 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     url_addr = serializers.URLField(required=True)
     # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
+    pictures = serializers.HyperlinkedIdentityField(many=True, view_name='picture-detail', format='html')
 
     def create(self, validated_data):
         """
@@ -26,5 +27,5 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WebpageOrder
-        depth = 1
+        depth = 0
         fields = ('id', 'created', 'url_addr', 'owner', 'pictures', 'crontab')
