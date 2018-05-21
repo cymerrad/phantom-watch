@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from rest_framework import mixins, generics
 from daemon.models import Picture, WebpageOrder
-from daemon.serializers import PictureSerializer, WebpageOrderSerializer
+from daemon.serializers import PictureSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, WebpageOrderDetailSerializer
 from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
@@ -85,7 +85,7 @@ class WebpageList(mixins.ListModelMixin,
     List all Webpages, or create a new Webpage.
     """
     queryset = WebpageOrder.objects.all()
-    serializer_class = WebpageOrderSerializer
+    serializer_class = WebpageOrderListSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
@@ -106,7 +106,7 @@ class WebpageDetail(mixins.RetrieveModelMixin,
     Retrieve, update or delete a Webpage.
     """
     queryset = WebpageOrder.objects.all()
-    serializer_class = WebpageOrderSerializer
+    serializer_class = WebpageOrderDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get(self, request, *args, **kwargs):
