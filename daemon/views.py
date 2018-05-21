@@ -8,6 +8,8 @@ from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.reverse import reverse
 
 class PictureViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -43,7 +45,7 @@ class WebpageViewSet(viewsets.ModelViewSet):
 #
 #
 # in case anything down here becomes useful later
-# just remember about viewset.ViewSetMixin
+# just remember about viewsets.ViewSetMixin
 
 class PictureList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
@@ -81,7 +83,8 @@ class PictureDetail(mixins.RetrieveModelMixin,
 
 class WebpageList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,
-                  generics.GenericAPIView):
+                  generics.GenericAPIView,
+                  viewsets.ViewSetMixin):
     """
     List all Webpages, or create a new Webpage.
     """

@@ -149,3 +149,9 @@ CELERY_TASK_SERIALIZER = 'json'
 PHANTOMJS_BIN = os.path.join(BASE_DIR, 'daemon/webscreenshot/phantomjs-2.1.1-linux-x86_64/bin/phantomjs')
 WEBSCREENSHOT_JS = os.path.join(BASE_DIR, 'daemon/webscreenshot/webscreenshot.js')
 SCREENSHOTS_DIRECTORY = '/tmp/'
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
