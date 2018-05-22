@@ -9,7 +9,8 @@ router.register(r'pictures', views_d.PictureViewSet)
 urlpatterns = [
     url(r'^webpages/$', views_d.WebpageList.as_view(), name='webpage-list'),
     url(r'^webpages/(?P<pk>[0-9]+)/$', views_d.WebpageDetail.as_view(), name='webpage-detail'),
-    url(r'^test', views_d.index)
+    url(r'^index', views_d.index),
+    url(r'^notindex', views_d.notindex),
 ]
 urlpatterns = format_suffix_patterns(urlpatterns) + [
     url(r'^', include(router.urls)),

@@ -61,4 +61,8 @@ class WebpageDetail(mixins.RetrieveModelMixin,
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'daemon/index.jinja2')
+        return render(request, 'daemon/index.html')
+
+def notindex(request):
+    if request.user.is_authenticated:
+        return render(request, 'rest_framework/login.html')

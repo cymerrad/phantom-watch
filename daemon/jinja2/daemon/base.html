@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <title>Phantom watch</title>
+    <link href="{{ static('rest_framework/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ static('rest_framework/css/prettify.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ static('rest_framework/css/default.css') }}" />
+</head>
+
+<body>
+    <div class="wrapper">
+        {% block navbar %}
+        <div class="navbar navbar-static-top navbar-inverse" role="navigation"
+            aria-label="navbar">
+            <div class="container">
+                <span>
+                    {% block branding %}
+                    <a class='navbar-brand' rel="nofollow" href='http://uw.edu.pl'>
+                        Dzień dobry
+                    </a>
+                    {% endblock %}
+                </span>
+                <ul class="nav navbar-nav pull-right">
+                    {% block userlinks %} 
+                        {% if user and user.is_authenticated() %} 
+                            Logged in
+                        {% else %}
+                            Logged out
+                        {% endif %} 
+                    {% endblock %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endblock %} 
+
+    {% block content %}
+    {% endblock %}
+    <!-- <a href="{{ url('admin:index') }}">Administration</a> -->
+</body>
+
+</html>
