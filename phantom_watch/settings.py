@@ -79,6 +79,14 @@ TEMPLATES = [
             ],
         },
     },
+    {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'phantom_watch.jinja2.environment'
+        },
+    },
 ]
 
 WSGI_APPLICATION = 'phantom_watch.wsgi.application'

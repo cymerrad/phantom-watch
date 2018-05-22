@@ -8,3 +8,4 @@ django-extensions
 sqlalchemy
 croniter
 django-cas-ng
+Jinja2
