@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_extensions',
     'django_cas_ng',
+    'django_jinja',
 ]
 
 MIDDLEWARE = [
@@ -67,11 +68,17 @@ ROOT_URLCONF = 'phantom_watch.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [],
+        # 'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'BACKEND': 'django_jinja.backend.Jinja2',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'daemon/jinja2'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
-            'environment': 'phantom_watch.jinja2.environment'
+            # 'environment': 'phantom_watch.jinja2.environment',
+            "match_extension": ".html",
+            "match_regex": r"(?!env/).*",
+            "app_dirname": "templates",
         },
     },
     {

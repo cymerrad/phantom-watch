@@ -7,6 +7,7 @@
     <meta name="theme-color" content="#000000">
     <title>Phantom watch</title>
     <link href="{{ static('rest_framework/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ static('rest_framework/css/bootstrap-tweaks.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ static('rest_framework/css/prettify.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ static('rest_framework/css/default.css') }}" />
 </head>
@@ -25,11 +26,11 @@
                     {% endblock %}
                 </span>
                 <ul class="nav navbar-nav pull-right">
-                    {% block userlinks %} 
-                        {% if user and user.is_authenticated() %} 
-                            Logged in
+                        {% block userlinks %} 
+                        {% if user and user.is_authenticated %} 
+                            {{ optional_logout(request, user) }}
                         {% else %}
-                            Logged out
+                            {{ optional_login(request) }}
                         {% endif %} 
                     {% endblock %}
                 </ul>
@@ -40,7 +41,26 @@
 
     {% block content %}
     {% endblock %}
-    <!-- <a href="{{ url('admin:index') }}">Administration</a> -->
+
+    {% block script %}
+      <script>
+        window.drf = {
+          csrfHeaderName: "{{ csrf_header_name|default('X-CSRFToken') }}",
+          csrfCookieName: "{{ csrf_cookie_name|default('csrftoken') }}"
+        };
+      </script>
+      <script src="{{ static("rest_framework/js/jquery-3.3.1.min.js" ) }}"></script>
+      <script src="{{ static("rest_framework/js/ajax-form.js" ) }}"></script>
+      <script src="{{ static("rest_framework/js/csrf.js" ) }}"></script>
+      <script src="{{ static("rest_framework/js/bootstrap.min.js" ) }}"></script>
+      <script src="{{ static("rest_framework/js/prettify-min.js" ) }}"></script>
+      <script src="{{ static("rest_framework/js/default.js" ) }}"></script>
+      <script>
+        $(document).ready(function() {
+          $('form').ajaxForm();
+        });
+      </script>
+    {% endblock %}
 </body>
 
 </html>

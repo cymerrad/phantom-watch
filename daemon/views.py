@@ -61,8 +61,6 @@ class WebpageDetail(mixins.RetrieveModelMixin,
 
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'daemon/index.html')
-
-def notindex(request):
-    if request.user.is_authenticated:
-        return render(request, 'rest_framework/login.html')
+        return render(request, 'daemon/index.html', context={'user':request.user, 'request':request})
+    else:
+        return render(request, 'daemon/index.html', context={'request':request})
