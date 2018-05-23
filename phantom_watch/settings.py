@@ -76,7 +76,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             # 'environment': 'phantom_watch.jinja2.environment',
-            "match_extension": ".html",
+            "match_extension": ".jinja",
             "match_regex": r"(?!env/).*",
             "app_dirname": "templates",
         },
