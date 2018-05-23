@@ -44,12 +44,11 @@ class DocumentedRouter(routers.DefaultRouter):
 doc_router = DocumentedRouter()
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^', include(doc_router.urls)),
-    # url(r'^api/', include(urls_d.router.urls)),
-    url(r'^api/', include('daemon.urls')),
-    url(r'^profile/', include(urls_s.router.urls)),
+    path('admin/', admin.site.urls), # admin page
+    url(r'^', include(urls_d.front)), # front page
+    url(r'^api/', include('daemon.urls')), # daemon api
+    url(r'^profile/', include(urls_s.router.urls)), # user management
     url(r'^auth/', include('service.cas', namespace='rest_framework')) if settings.CAS_UW 
-        else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')),
+        else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')), # variable authorization
     
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # serving images as static content

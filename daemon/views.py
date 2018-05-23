@@ -10,7 +10,7 @@ from rest_framework.decorators import action
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 class PictureViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -58,6 +58,9 @@ class WebpageDetail(mixins.RetrieveModelMixin,
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+def almost_index(request):
+    return redirect("/index")
 
 def index(request):
     if request.user.is_authenticated:
