@@ -1,8 +1,14 @@
 {% extends 'daemon/base.jinja' %}
 {% block content %}
-    <h1>Index</h1>
-    <p class="important">
-      Welcome to my awesome homepage.
-    </p>
+<div class="container">
+<p>Jak na razie udostępniam korzystanie z serwisu tylko bezpośrednio przez API.</p>
+<p>Całe szczęście Django Rest Framework daje całkiem przyjemny sposób na testowanie owego API.</p>
+<p>Bez problemu daje się dodać żądanie do śledzenia strony, ale trochę gorzej z odzyskaniem efektów pracy: dopiero jak front będzie gotowy
+to stworzę możliwość spakowania screenshotów do zipa i pobranie ich wszystkich naraz.</p>
+<p>Teraz można je oglądać tylko klikając ręcznie w linki jak plebs.</p>
+<br>
+<p>Zatem zapraszam do <a href="{{ url('daemon:webpage-list') }}">{{ url('daemon:webpage-list') }}</a>
+
+</div>
     
 {% endblock %}

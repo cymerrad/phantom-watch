@@ -5,6 +5,13 @@ from django.utils.safestring import SafeData, mark_safe
 from django.urls import NoReverseMatch, reverse
 from django.utils.html import escape, format_html
 
+# @library.global_function
+# def rev(tag):
+#     try:
+#         return mark_safe(reverse(tag))
+#     except NoReverseMatch:
+#         return ''
+
 @library.global_function
 def myecho(data):
     """

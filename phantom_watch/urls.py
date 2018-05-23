@@ -45,8 +45,8 @@ doc_router = DocumentedRouter()
 
 urlpatterns = [
     path('admin/', admin.site.urls), # admin page
-    url(r'^', include(urls_d.front)), # front page
-    url(r'^api/', include('daemon.urls')), # daemon api
+    url(r'^', include('daemon.front')), # front page
+    url(r'^api/', include('daemon.urls', namespace='daemon')), # daemon api
     url(r'^profile/', include(urls_s.router.urls)), # user management
     url(r'^auth/', include('service.cas', namespace='rest_framework')) if settings.CAS_UW 
         else url(r'^auth/', include('rest_framework.urls', namespace='rest_framework')), # variable authorization

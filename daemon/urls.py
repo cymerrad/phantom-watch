@@ -3,6 +3,7 @@ from daemon import views as views_d
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework import routers
 
+app_name='daemon'
 router = routers.DefaultRouter()
 router.register(r'pictures', views_d.PictureViewSet)
 
@@ -13,8 +14,3 @@ urlpatterns = [
 urlpatterns = format_suffix_patterns(urlpatterns) + [
     url(r'^', include(router.urls)),
 ]
-
-front = format_suffix_patterns([
-    url(r'^$', views_d.almost_index),
-    url(r'^index', views_d.index),
-])
