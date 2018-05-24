@@ -25,6 +25,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. Ansible
 1. Parameters passed to phantom (like resolution, username/password for a page)
 1. Puppeteer
+1. Pozbyć się brandingu DRF z /api/
 
 ## Start-up
 
