@@ -58,6 +58,29 @@ class Dimensions {
 
 /**
  * 
+ * @param {puppeteer.Page} page 
+ * @param {Number} curHeight 
+ * @param {Number} downBy
+ * @returns {[Number, Number]} New y position on the page and possible new height of the page
+ */
+async function scrollDown(page, curHeight, downBy) {
+  // add
+  height = height + dimensions.height;
+
+  // 'instant' in opposition to 'smooth'
+  await page.evaluate(`window.scrollTo({top: ${height}, behavior: 'instant'})`);
+
+  // wait for site's potential javascript to notice the change and do it's thing with css
+  await (async() => new Promise(resolve => setTimeout(resolve, 200)))();
+
+  // site's height might have changed
+  pageHeight = await page.evaluate('document.body.scrollHeight');
+
+  return [height, pageHeight]
+}
+
+/**
+ * 
  * @param {puppeteer.Browser} browser 
  * @param {URL} pageUrl 
  * @param {Dimensions} dimensions 
@@ -78,16 +101,36 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
 
   // TODO
   if (!whole) {
+    let batchDir = path.format({dir: dir, base: name});
+    checkDirectorySync(batchDir);
     // screenshot the page pgDn by pgDn
     // dump many screenshots in 'dir/name/'
+    let results = []
+    let pageHeight = await page.evaluate('document.body.scrollHeight');
+    let height = 0;
+    while (height < pageHeight) {
+      let part = path.format({dir: batchDir, name: `${height}-${pageHeight}`, ext: ext});
+      await page.screenshot({path: part}); 
+      let now = rfc3339();
+      
+      results.push(new JobWellDone(part, now));
 
-    return []
+      [height, pageHeight] = await scrollDown(page, heigh, dimensions.height);
+    } 
+
+    return results;
   } else {
+    // scroll to the bottom of the page first - in case of dynamic, 'infinite' loading
+    let pageHeight = await page.evaluate('document.body.scrollHeight');
+    let height = 0;
+    while (height < pageHeight) {
+      [height, pageHeight] = await scrollDown(page, heigh, dimensions.height);
+    }
+
     // Saving 
+    let file = path.format({dir: dir, name: name, ext: ext});
+    await page.screenshot({path: file, fullPage: true});
     let now = rfc3339();
-    let file = path.format({dir: dir, name: name, ext: ext})
-    console.log(`Saving to ${file}`);
-    await page.screenshot({path: file});
     return [new JobWellDone(file, now)];
   }
 }
@@ -119,19 +162,21 @@ class JobWellDone {
     pages = pages.map(p=>{p.username = settings.username; p.password = settings.password; return p;});
   } else if (settings.password || settings.username) {
     console.log("WARNING: password XOR username provided - ignoring due to insufficient credentials");
+    return;
   }
 
   // output directory
   let outputDirectory = settings.outputDir;
   checkDirectorySync(outputDirectory);
 
+  let whole = settings.wholePage;
   let dimensions = settings.dimensions;
   let results = [];
 
   // init browser
   const browser = await puppeteer.launch();
 
-  // one or many
+  // one explicitly named or many
   if (pages.length == 1 && settings.output) {
     let name = path.parse(output).name;
     let extension = path.parse(output).ext ? path.parse(output).ext : ".png"
@@ -141,17 +186,18 @@ class JobWellDone {
       ext: extension,
     });
 
-    let finished = await screenshotPage(browser, pages[0], dimensions, outFull, true);
+    let finished = await screenshotPage(browser, pages[0], dimensions, outFull, whole);
 
     results.push(finished);
   } else {
     results = await Promise.all(
-      pages.map(p=>screenshotPage(browser, p.href, dimensions, uuidv4(), true))
+      pages.map(p=>screenshotPage(browser, p.href, dimensions, path.format({dir: outputDirectory, base:uuidv4()}), whole))
     )
   }
   
   // kthxbai
   await browser.close();
 
+  console.log(JSON.stringify(results));
   return results;
 })();
