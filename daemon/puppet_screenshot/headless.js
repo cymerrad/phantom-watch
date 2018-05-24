@@ -65,7 +65,7 @@ class Dimensions {
  */
 async function scrollDown(page, curHeight, downBy) {
   // add
-  height = height + dimensions.height;
+  let height = curHeight + downBy;
 
   // 'instant' in opposition to 'smooth'
   await page.evaluate(`window.scrollTo({top: ${height}, behavior: 'instant'})`);
@@ -74,7 +74,7 @@ async function scrollDown(page, curHeight, downBy) {
   await (async() => new Promise(resolve => setTimeout(resolve, 200)))();
 
   // site's height might have changed
-  pageHeight = await page.evaluate('document.body.scrollHeight');
+  let pageHeight = await page.evaluate('document.body.scrollHeight');
 
   return [height, pageHeight]
 }
@@ -115,7 +115,7 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
       
       results.push(new JobWellDone(part, now));
 
-      [height, pageHeight] = await scrollDown(page, heigh, dimensions.height);
+      [height, pageHeight] = await scrollDown(page, height, dimensions.height);
     } 
 
     return results;
@@ -124,7 +124,7 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     let pageHeight = await page.evaluate('document.body.scrollHeight');
     let height = 0;
     while (height < pageHeight) {
-      [height, pageHeight] = await scrollDown(page, heigh, dimensions.height);
+      [height, pageHeight] = await scrollDown(page, height, dimensions.height);
     }
 
     // Saving 
