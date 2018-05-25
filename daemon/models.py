@@ -61,8 +61,23 @@ class WebpageOrder(models.Model):
     WHOLE = "WHOLE"
     PARTED = "PARTED"
     TYPE_CHOICES = (
-        (WHOLE, 'WHOLE'),
-        (PARTED, 'PARTED'),
+        (WHOLE, 'Whole page'),
+        (PARTED, 'In parts wrt resolution'),
+    )
+
+    RESOLUTION_DEFAULT = ('1366,768')
+    RESOLUTION_CHOICES = (
+        (RESOLUTION_DEFAULT, '1366x768'),
+        ('1920,1080', '1920x1080'),
+        ('1280,800', '1280x800'),
+        ('320,568', '320x568'),
+        ('1440,900', '1440x900'),
+        ('1280,1024', '1280x1024'),
+        ('320,480', '320x480'),
+        ('1600,900', '1600x900'),
+        ('768,1024', '768x1024'),
+        ('1024,768', '1024x768'),
+        ('1680,1050', '1680x1050'),
     )
 
     created = models.DateTimeField(auto_now_add=True)
@@ -110,10 +125,10 @@ class TaskScheduler(models.Model):
     @staticmethod
     def schedule_every(task_name, period, every, args=None, kwargs=None):
         """ schedules a task by name every "every" "period". So an example call would be:
-            TaskScheduler('mycustomtask', 'seconds', 30, [1,2,3]) 
+            TaskScheduler('seconds', 'mycustomtask', 30, [1,2,3]) 
             that would schedule your custom task to run every 30 seconds with the arguments 1,2 and 3 passed to the actual task. 
         """
-        permissible_periods = ['days', 'hours', 'minutes', 'seconds']
+        permissible_periods = ['hours', 'days', 'seconds', 'minutes']
         if period not in permissible_periods:
             raise Exception('Invalid period specified')
         # create the periodic task and the interval
