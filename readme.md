@@ -18,13 +18,15 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. ~~Zrobić daemona do robienia screenshotów używającego tego co już kiedyś napisałem~~
     - ~~PhantomJS w repo lub instalacja gdzieś~~
     - ~~Celery~~
+    - Puppeteer
 1. Front
 1. ~~CAS~~
 1. Django production settings
 1. OK permissions system
 1. Ansible
-1. Parameters passed to phantom (like resolution, username/password for a page)
-1. Puppeteer
+1. ~~Puppeteer~~
+    - obejście wkurzających pop-upów na niektórych stronach (ostrzeżenie o cookies lub promocje)
+    - pre-zdefiniowane widoki (jak z telefonu komórkowego czy tableta)
 1. Pozbyć się brandingu DRF z /api/
 
 ## Start-up
@@ -55,8 +57,19 @@ curl -L https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.7.5/rab
 sudo dpkg -i /tmp/esl-erlang.deb
 sudo dpkg -i /tmp/rabbitmq.deb
 sudo apt --fix-broken -y install
-curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -o /tmp/phantomjs.tar.bz2
-tar -xf /tmp/phantomjs.tar.bz2 -C daemon/webscreenshot/
+
+# deprecated
+# curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -o /tmp/phantomjs.tar.bz2
+# tar -xf /tmp/phantomjs.tar.bz2 -C daemon/webscreenshot/
+
+cd daemon/puppet_screenshot
+curl -L https://nodejs.org/dist/v8.11.2/node-v8.11.2-linux-x64.tar.xz -o /tmp/node-v8.11.2-linux-x64.tar.xz
+sudo tar -xf /tmp/node-v8.11.2-linux-x64.tar.xz -C /opt/
+sudo ln -s /opt/node-v8.11.2-linux-x64/bin/npm /usr/bin/npm
+sudo ln -s /opt/node-v8.11.2-linux-x64/bin/node /usr/bin/nodejs
+sudo ln -s /opt/node-v8.11.2-linux-x64/bin/node /usr/bin/node
+npm i
+cd -
 
 python manage.py makemigrations service
 python manage.py makemigrations daemon
