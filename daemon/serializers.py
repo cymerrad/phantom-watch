@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from daemon.models import Screenshot, WebpageOrder
+import logging
 
+logger = logging.getLogger('django')
 
 class ScreenshotSerializer(serializers.ModelSerializer):
     """
@@ -38,8 +40,18 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, initial=WebpageOrder.WHOLE)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, initial=WebpageOrder.RESOLUTION_DEFAULT)
     clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.')
-    username = serializers.CharField(write_only=True, help_text='Username to be used for logging in to the site.')
-    password = serializers.CharField(write_only=True, help_text='Did you expect an API view to hide passwords?')
+    username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.')
+    password = serializers.CharField(write_only=True, required=False, help_text='Did you expect an API view to hide passwords?')
+
+    def validate(self, data):
+        """
+        We have to receive both username and password or neither of them
+        """
+        logger.info(data)
+        if ('username' in data.keys()) ^ ('password' in data.keys()):
+            raise serializers.ValidationError("Cannot provide username without password or vice-versa")
+
+        return data
 
     def create(self, validated_data):
         """
