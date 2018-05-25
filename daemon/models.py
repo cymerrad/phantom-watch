@@ -86,8 +86,10 @@ class WebpageOrder(models.Model):
     crontab = models.CharField(max_length=1024, blank=False, validators=[validate_crontab])
     schedule = models.ForeignKey('daemon.TaskScheduler', on_delete=models.SET_NULL, null=True)
     shot_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default=WHOLE)
-    dimensions = models.CharField(max_length=20, blank=False, default="1366x768")
-    other = models.CharField(max_length=1024)
+    resolution = models.CharField(max_length=20, choices=RESOLUTION_CHOICES, default=RESOLUTION_DEFAULT)
+    clear_view = models.BooleanField(default=False)
+    username = models.CharField(max_length=50)
+    password = models.CharField(max_length=50)
 
     def save(self, *args, **kwargs):
         """
