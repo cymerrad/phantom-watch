@@ -33,6 +33,7 @@ class Dimensions {
 let argv = require('minimist')(process.argv.slice(2));
 const defaultExtension = ".png";
 const defaultDimensions = new Dimensions(1366, 768);
+const defaultScreenshotDir = "screenshots";
 
 /**
  * Return settings from argv
@@ -40,7 +41,7 @@ const defaultDimensions = new Dimensions(1366, 768);
 async function getSettings() {
   let set = {
     output : argv.o ? argv.o : null,
-    outputDir : argv.d ? argv.d : ".",
+    outputDir : argv.d ? argv.d : defaultScreenshotDir,
     dimensions : argv.s ? ((w,h)=>(new Dimensions(w,h)))(...argv.size.split(',')) : defaultDimensions,
     username : argv.u ? argv.u : null,
     password : argv.p ? argv.p : null,

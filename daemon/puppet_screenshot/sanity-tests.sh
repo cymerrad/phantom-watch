@@ -26,3 +26,7 @@ nodejs headless.js -d screenshots -o home/some_dir/filename.jpg http://google.co
 
 echo "expected: nothing exceptional; only some weird directory will be created with image inside"
 nodejs headless.js -d '&\$!?#%^*(),.' http://google.com --whole
+
+echo "expected: two files (image1.png & image2.png) in screenshots"
+nodejs headless.js -d screenshots -o image1 http://google.com --whole
+nodejs headless.js -o image2 http://google.com --whole
