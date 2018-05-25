@@ -59,10 +59,11 @@ def with_timeout(output_filename, webpage_url, timeout, dimensions=None, whole_p
     retval = p.poll()
     if retval != SHELL_EXECUTION_OK:
         # error
-        logger.debug("PID {} returned\nstdout: '{}'\nstderr: '{}';".format(p.pid, p.stdout, p.stderr)) 
+        logger.debug("PID {} returned\nstdout: '{}'\nstderr: '{}';".format(p.pid, p.stdout.read(), p.stderr.read())) 
         raise ScreenshotException("Unknown exception")
     
     else:
         # ok
-        logger.debug("PID {} returned".format(p.stdout))
-        return p.stdout
+        output = p.stdout.read()
+        logger.debug("PID {} returned".format(str(output)))
+        return output

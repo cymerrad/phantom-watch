@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from daemon.models import WebpageOrder, Picture
+from daemon.models import WebpageOrder, Picture, FailedScreenshot
 from uuid import uuid4
 from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
@@ -10,6 +10,7 @@ from daemon.puppet_screenshot.screenshot import with_timeout
 import datetime
 import logging
 import os
+import json
 
 logger = logging.getLogger('django')
 
@@ -27,25 +28,44 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
     ### SAVE TO DB
     try:
         # TODO
+        # from daemon.tasks import take_screenshot as ts
+        # ts.run('http://example.com', 0)
         # PARSING THE RESULT
+        pre_json = result.decode('utf-8').strip()
+        structure = json.loads(pre_json)
+        assert len(structure) == 1 # I made the .js script so it would accept many inputs, but for now we pass only one
+        output_info = structure[0] # e.g. [{'location': '/tmp/screenshots/6e14ea74-8072-4369-8b9b-7962acc3cdc4.png', 'datetime': '2018-04-05T15:43:18'}]
 
         webpage_order = WebpageOrder.objects.get(id=webpage_order_id)
 
-        with open(output_filename, "rb") as fp:
-            wrapped_file = UploadedFile(fp)
-            pic = Picture(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
-                description="Screenshot of {} from {}".format(webpage_url, datetime.datetime.now()))
-            pic.save()
-            return 0
+        for screen in output_info:
+            try: 
+                err = screen['error']
+                try:
+                    date = screen['datetime']
+                except KeyError:
+                    date = "This failed too?"
+                failure = FailedScreenshot(order=webpage_order, failure_date=date, description=err)
+                failure.save()
+
+            # so this is okay, as it means no error!
+            except KeyError as e:
+                try:
+                    location = screen['location']
+                    date = screen['datetime']
+                except KeyError:
+                    logger.error("Complete failure of the system. Screenshot output: {}".format(pre_json))
+                    continue
+
+                with open(location, "rb") as fp:
+                    wrapped_file = UploadedFile(fp)
+                    pic = Picture(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
+                        description="Screenshot of {} from {}".format(webpage_url, date))
+                    pic.save()
 
     except Exception as e:
-        logger.error("Reading/saving the screenshot: {}".format(e))
+        logger.error("Unexpected error receiving the screenshot: {}\n{}".format(e, pre_json))
 
-    # otherwise screenshot failed
-    # maybe you should do something about it?
-
-    # TODO errors table?
-
-    return 1
+    return pre_json
 
 

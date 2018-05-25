@@ -49,6 +49,11 @@ def parse_crontab(ctab: str):
     spl = ctab.split(' ')
     return {'minute':spl[0], 'hour':spl[1], 'day_of_month':spl[2], 'month_of_year':spl[3], 'day_of_week':spl[4]}
 
+class FailedScreenshot(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey('daemon.WebpageOrder', related_name='pictures', on_delete=models.CASCADE)
+    failure_date = models.TextField('When the failure occured', default="")
+    description = models.TextField("Description of the uploaded image", default="")
 
 class WebpageOrder(models.Model):
     created = models.DateTimeField(auto_now_add=True)
