@@ -6,6 +6,7 @@ const path = require('path');
 const fs = require('fs');
 const { URL } = require('url');
 const uuidv4 = require('uuid/v4');
+const mkdirp = require('mkdirp').sync;
 
 class JobWellDone {
   constructor(location, datetime) {
@@ -69,7 +70,7 @@ function checkDirectorySync(directory) {
   try {
     fs.statSync(directory);
   } catch(e) {
-    fs.mkdirSync(directory);
+    mkdirp(directory);
   }
 }
 
@@ -170,11 +171,15 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
   
   // parse pages
   try {
-    var pages = settings.pages.map(p=>{try {return new URL(p)} catch (e) {console.log("invalid url:", p); return null;} });
+    var pages = settings.pages.map(p=>{try {return new URL(p)} catch (e) {return null}});
   } catch (e) {}
+  if (pages===undefined || !pages || pages.length == 0) {
+    console.log("Nothing to process.")
+    return 1;
+  }
   pages = pages.filter(x => x);
   if (pages.length == 0) {
-    console.log("nothing to process");
+    console.log("Nothing to process.");
     return 1;
   }
 
@@ -183,12 +188,12 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     // username and password provided, update every link
     pages = pages.map(p=>{p.username = settings.username; p.password = settings.password; return p;});
   } else if (settings.password || settings.username) {
-    console.log("WARNING: password XOR username provided - ignoring due to insufficient credentials");
+    console.log("WARNING: password XOR username provided - ignoring due to insufficient credentials.");
     return 1;
   }
 
   // output directory
-  let outputDirectory = settings.outputDir;
+  let outputDirectory = path.resolve(settings.outputDir);
   checkDirectorySync(outputDirectory);
 
   let output = settings.output;
@@ -198,7 +203,11 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
 
   // stupid cases
   if (output && pages.length > 1) {
-    console.log("Cannot combine multiple pages with '-o' option")
+    console.log("Cannot combine multiple pages with '-o' option.")
+    return 1;
+  }
+  if (argv.d && argv.o && path.parse(argv.o).root == "/") {
+    console.log("Cannot combine options '-d' and '-o', when '-o' is a full path to file.")
     return 1;
   }
 
@@ -207,13 +216,18 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
 
   // one explicitly named or all other cases
   if (pages.length == 1 && output) {
-    let name = path.parse(output).name;
-    let extension = path.parse(output).ext ? path.parse(output).ext : defaultExtension;
+    let parsedOutput = path.parse(output);
+    let possibleDir = parsedOutput.dir;
+    let name = parsedOutput.name;
+    let extension = parsedOutput.ext ? parsedOutput.ext : defaultExtension;
+
+    let edgyDir = path.join(outputDirectory, possibleDir)
     let outFull = path.format({
-      dir: outputDirectory,
+      dir: edgyDir,
       name: name,
       ext: extension,
     });
+    checkDirectorySync(edgyDir);
 
     let finished = await screenshotPage(browser, pages[0], dimensions, outFull, whole);
 

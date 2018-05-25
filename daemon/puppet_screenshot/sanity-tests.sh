@@ -18,5 +18,11 @@ nodejs headless.js -d screenshots -o example.jpg http://pepper.pl http://alibaba
 echo "expected: .png in screenshots, path should be resolved"
 nodejs headless.js -d ../$( echo $PWD | rev | cut -d'/' -f1 | rev )/screenshots http://google.com --whole
 
-echo "expected: ???"
-nodejs headless.js -d ../$( echo $PWD | rev | cut -d'/' -f1 | rev )/screenshots -o some_dir/filename.jpg http://google.com --whole
+echo "expected: error"
+nodejs headless.js -d screenshots -o /home/some_dir/filename.jpg http://google.com --whole
+
+echo "expected: screenshots/home/some_dir/filename.jpg"
+nodejs headless.js -d screenshots -o home/some_dir/filename.jpg http://google.com --whole
+
+echo "expected: nothing exceptional; only some weird directory will be created with image inside"
+nodejs headless.js -d '&\$!?#%^*(),.' http://google.com --whole
