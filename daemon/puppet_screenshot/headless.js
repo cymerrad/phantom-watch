@@ -7,8 +7,31 @@ const fs = require('fs');
 const { URL } = require('url');
 const uuidv4 = require('uuid/v4');
 
+class JobWellDone {
+  constructor(location, datetime) {
+    this.location = location;
+    this.datetime = datetime ? datetime : rfc3339();
+  }
+}
+
+class JobFailed {
+  constructor(link, error, datetime) {
+    this.link = link;
+    this.error = error;
+    this.datetime = datetime ? datetime : rfc3339();
+  }
+}
+
+class Dimensions {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+}
+
 let argv = require('minimist')(process.argv.slice(2));
 const defaultExtension = ".png";
+const defaultDimensions = new Dimensions(1366, 768);
 
 /**
  * Return settings from argv
@@ -17,7 +40,7 @@ async function getSettings() {
   let set = {
     output : argv.o ? argv.o : null,
     outputDir : argv.d ? argv.d : ".",
-    dimensions : argv.s ? ((w,h)=>(new Dimensions(w,h)))(...argv.size.split(',')) : new Dimensions(1366, 768),
+    dimensions : argv.s ? ((w,h)=>(new Dimensions(w,h)))(...argv.size.split(',')) : defaultDimensions,
     username : argv.u ? argv.u : null,
     password : argv.p ? argv.p : null,
     wholePage : argv.whole ? true : false,
@@ -47,13 +70,6 @@ function checkDirectorySync(directory) {
     fs.statSync(directory);
   } catch(e) {
     fs.mkdirSync(directory);
-  }
-}
-
-class Dimensions {
-  constructor(width, height) {
-    this.width = width;
-    this.height = height;
   }
 }
 
@@ -91,7 +107,11 @@ async function scrollDown(page, curHeight, downBy) {
 async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
   const page = await browser.newPage();
   await page.setViewport(dimensions);
-  await page.goto(`${pageUrl}`, {waitUntil: 'networkidle2'});
+  try {
+    await page.goto(`${pageUrl}`, {waitUntil: 'networkidle2'});
+  } catch(e) {
+    return [new JobFailed(pageUrl, "Resource failed to load", rfc3339())];
+  }
 
   let out = path.parse(output);
   let dir = out.dir;
@@ -110,11 +130,15 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     let pageHeight = await page.evaluate('document.body.scrollHeight');
     let height = 0;
     while (height < pageHeight) {
-      let part = path.format({dir: batchDir, name: `${height}-${pageHeight}`, ext: ext});
-      await page.screenshot({path: part}); 
+      let screenshotFilename = path.format({dir: batchDir, name: `${height}-${pageHeight}`, ext: ext});
+      try {
+        await page.screenshot({path: screenshotFilename}); 
+      } catch(e) {
+        return [new JobFailed(pageUrl, "Saving "+`${screenshotFilename}`)]
+      }
       let now = rfc3339();
       
-      results.push(new JobWellDone(part, now));
+      results.push(new JobWellDone(screenshotFilename, now));
 
       [height, pageHeight] = await scrollDown(page, height, dimensions.height);
     } 
@@ -129,17 +153,14 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     }
 
     // Saving 
-    let file = path.format({dir: dir, name: name, ext: ext});
-    await page.screenshot({path: file, fullPage: true});
+    let screenshotFilename = path.format({dir: dir, name: name, ext: ext});
+    try {
+      await page.screenshot({path: screenshotFilename, fullPage: true});
+    } catch(e) {
+      return [new JobFailed(pageUrl, "Saving "+`${screenshotFilename}`)]
+    }
     let now = rfc3339();
-    return [new JobWellDone(file, now)];
-  }
-}
-
-class JobWellDone {
-  constructor(location,datetime) {
-    this.location = location;
-    this.datetime = datetime;
+    return [new JobWellDone(screenshotFilename, now)];
   }
 }
 
@@ -177,7 +198,7 @@ class JobWellDone {
   // init browser
   const browser = await puppeteer.launch();
 
-  // one explicitly named or many
+  // one explicitly named or all other cases
   if (pages.length == 1 && settings.output) {
     let name = path.parse(output).name;
     let extension = path.parse(output).ext ? path.parse(output).ext : defaultExtension;
@@ -192,7 +213,7 @@ class JobWellDone {
     results.push(finished);
   } else {
     results = await Promise.all(
-      pages.map(p=>screenshotPage(browser, p.href, dimensions, path.format({dir: outputDirectory, base:uuidv4()}), whole))
+      pages.map(p=>screenshotPage(browser, p.href, dimensions, path.format({dir: outputDirectory, base: `${_.replace(p.hostname, /\./, '_')}_${rfc3339()}`}), whole))
     )
   }
   
