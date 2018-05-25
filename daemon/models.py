@@ -81,7 +81,7 @@ class WebpageOrder(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
-    url_addr = models.CharField(max_length=2083, blank=False, validators=[URLValidator])
+    target_url = models.CharField(max_length=2083, blank=False, validators=[URLValidator])
     owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE)
     crontab = models.CharField(max_length=1024, blank=False, validators=[validate_crontab])
     schedule = models.ForeignKey('daemon.TaskScheduler', on_delete=models.SET_NULL, null=True)
@@ -106,7 +106,7 @@ class WebpageOrder(models.Model):
             self.schedule = TaskScheduler.schedule_cron(
                 task_name='daemon.tasks.take_screenshot', 
                 crontable=self.crontab, 
-                args=[self.url_addr, self.pk],
+                args=[self.target_url, self.pk],
             )
             super(WebpageOrder, self).save(*args, **kwargs)
 

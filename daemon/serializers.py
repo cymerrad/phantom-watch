@@ -35,9 +35,9 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
 
 class WebpageOrderListSerializer(serializers.ModelSerializer): 
     id = serializers.IntegerField(label='ID', read_only=True)
-    uri = serializers.HyperlinkedIdentityField(view_name='daemon:webpage-detail', format='html')
+    self_url = serializers.HyperlinkedIdentityField(view_name='daemon:webpage-detail', format='html')
     owner = serializers.ReadOnlyField(source='owner.username')
-    url_addr = serializers.URLField(required=True)
+    target_url = serializers.URLField(required=True)
     pictures_count = serializers.SerializerMethodField()
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, initial=WebpageOrder.WHOLE)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, initial=WebpageOrder.RESOLUTION_DEFAULT)
@@ -61,29 +61,27 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
         """
         return WebpageOrder.objects.create(**validated_data)
 
-    def get_self_url(self, obj):
-        return reverse('daemon:webpage-detail', kwargs={'pk': obj.pk})
-
     def get_pictures_count(self, obj):
         return obj.pictures.count()
 
     class Meta:
         model = WebpageOrder
         depth = 0
-        fields = ('id', 'uri', 'created', 'url_addr', 'owner', 'pictures_count', 'crontab', 
+        fields = ('id', 'self_url', 'created', 'target_url', 'owner', 'pictures_count', 'crontab', 
             'shot_type', 'resolution', 'username', 'password', 'clear_view')
 
 
 class WebpageOrderDetailSerializer(serializers.ModelSerializer): 
     id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
-    url_addr = serializers.URLField(required=True)
-    clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.', initial=False)
+    target_url = serializers.URLField(read_only=True)
+    clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.')
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, read_only=True)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, read_only=True)
     username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.')
     password = serializers.CharField(write_only=True, required=False, help_text='Did you expect an API view to hide passwords?')
-
+    credentials = serializers.SerializerMethodField()
+    clear_credentials = serializers.BooleanField(help_text='Delete stored credentials?', initial=False, write_only=True)
 
     def create(self, validated_data):
         """
@@ -91,8 +89,30 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
         """
         return WebpageOrder.objects.create(**validated_data)
 
+    def update(self, instance, validated_data):
+        if validated_data['clear_credentials']:
+            setattr(instance, 'username', '')
+            setattr(instance, 'password', '')
+        instance.save()
+        return super(WebpageOrderDetailSerializer, self).update(instance, validated_data)
+
+    def validate(self, data):
+        """
+        We have to receive both username and password or neither of them
+        """
+        logger.info(data)
+        if ('username' in data.keys()) ^ ('password' in data.keys()):
+            raise serializers.ValidationError("Cannot provide username without password or vice-versa")
+
+        return data
+
+    def get_credentials(self, obj):
+        if (obj.password is not "") and (obj.username is not ""):
+            return True
+        return False
+
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'url_addr', 'owner', 'pictures', 'crontab', 'failures',
-            'shot_type', 'resolution', 'username', 'password', 'clear_view')
+        fields = ('id', 'created', 'target_url', 'owner', 'pictures', 'crontab', 'failures',
+            'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')
