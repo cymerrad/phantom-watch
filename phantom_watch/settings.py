@@ -165,6 +165,10 @@ PHANTOMJS_BIN = os.path.join(BASE_DIR, 'daemon/webscreenshot/phantomjs-2.1.1-lin
 WEBSCREENSHOT_JS = os.path.join(BASE_DIR, 'daemon/webscreenshot/webscreenshot.js')
 SCREENSHOTS_DIRECTORY = '/tmp/'
 
+NODEJS = "node"
+SCREENSHOT_JS = os.path.join(BASE_DIR, 'daemon/puppet_screenshot/screenshot.js')
+SCREENSHOTS_DIR = '/tmp/screenshots'
+
 # DRF
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
