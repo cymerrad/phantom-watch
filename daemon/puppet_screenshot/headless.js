@@ -191,15 +191,22 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
   let outputDirectory = settings.outputDir;
   checkDirectorySync(outputDirectory);
 
+  let output = settings.output;
   let whole = settings.wholePage;
   let dimensions = settings.dimensions;
   let results = [];
+
+  // stupid cases
+  if (output && pages.length > 1) {
+    console.log("Cannot combine multiple pages with '-o' option")
+    return 1;
+  }
 
   // init browser
   const browser = await puppeteer.launch();
 
   // one explicitly named or all other cases
-  if (pages.length == 1 && settings.output) {
+  if (pages.length == 1 && output) {
     let name = path.parse(output).name;
     let extension = path.parse(output).ext ? path.parse(output).ext : defaultExtension;
     let outFull = path.format({
