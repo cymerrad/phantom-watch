@@ -8,6 +8,7 @@ const { URL } = require('url');
 const uuidv4 = require('uuid/v4');
 
 let argv = require('minimist')(process.argv.slice(2));
+const defaultExtension = ".png";
 
 /**
  * Return settings from argv
@@ -95,7 +96,7 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
   let out = path.parse(output);
   let dir = out.dir;
   let name = out.name;
-  let ext = out.ext ? out.ext : ".png";
+  let ext = out.ext ? out.ext : defaultExtension;
 
   // TODO get rid of cookies nagbar or ads using h4x or some extension?
 
@@ -153,7 +154,7 @@ class JobWellDone {
   pages = pages.filter(x => x);
   if (pages.length == 0) {
     console.log("nothing to process");
-    return;
+    return 1;
   }
 
   // username and password
@@ -162,7 +163,7 @@ class JobWellDone {
     pages = pages.map(p=>{p.username = settings.username; p.password = settings.password; return p;});
   } else if (settings.password || settings.username) {
     console.log("WARNING: password XOR username provided - ignoring due to insufficient credentials");
-    return;
+    return 1;
   }
 
   // output directory
@@ -179,7 +180,7 @@ class JobWellDone {
   // one explicitly named or many
   if (pages.length == 1 && settings.output) {
     let name = path.parse(output).name;
-    let extension = path.parse(output).ext ? path.parse(output).ext : ".png"
+    let extension = path.parse(output).ext ? path.parse(output).ext : defaultExtension;
     let outFull = path.format({
       dir: outputDirectory,
       name: name,
@@ -199,5 +200,5 @@ class JobWellDone {
   await browser.close();
 
   console.log(JSON.stringify(results));
-  return results;
+  return 0;
 })();
