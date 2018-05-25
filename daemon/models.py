@@ -37,6 +37,9 @@ class Screenshot(models.Model):
     original_filename = models.TextField("Original filename", default="")
     description = models.TextField("Description of the uploaded image", default="")
 
+    class Meta:
+        ordering = ('created',) 
+
 def validate_crontab(ctab: str):
     if not croniter.is_valid(ctab):
         raise ValidationError(
@@ -55,11 +58,21 @@ class FailedScreenshot(models.Model):
     description = models.TextField("Description of the uploaded image", default="")
 
 class WebpageOrder(models.Model):
+    WHOLE = "WHOLE"
+    PARTED = "PARTED"
+    TYPE_CHOICES = (
+        (WHOLE, 'WHOLE'),
+        (PARTED, 'PARTED'),
+    )
+
     created = models.DateTimeField(auto_now_add=True)
     url_addr = models.CharField(max_length=2083, blank=False, validators=[URLValidator])
     owner = models.ForeignKey('auth.User', related_name='orders', on_delete=models.CASCADE)
     crontab = models.CharField(max_length=1024, blank=False, validators=[validate_crontab])
     schedule = models.ForeignKey('daemon.TaskScheduler', on_delete=models.SET_NULL, null=True)
+    shot_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default=WHOLE)
+    dimensions = models.CharField(max_length=20, blank=False, default="1366x768")
+    other = models.CharField(max_length=1024)
 
     def save(self, *args, **kwargs):
         """

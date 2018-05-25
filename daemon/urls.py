@@ -7,6 +7,9 @@ app_name='daemon'
 router = routers.DefaultRouter()
 router.register(r'screenshots', views_d.ScreenshotViewSet)
 
+# TODO
+# force webpages into root api
+
 urlpatterns = [
     url(r'^webpages/$', views_d.WebpageList.as_view(), name='webpage-list'),
     url(r'^webpages/(?P<pk>[0-9]+)/$', views_d.WebpageDetail.as_view(), name='webpage-detail'),

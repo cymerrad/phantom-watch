@@ -16,11 +16,19 @@ logger = logging.getLogger('django')
 
 @shared_task
 def take_screenshot(webpage_url, webpage_order_id, **kwargs):
+    """
+    kwargs:
+    dimensions=None, 
+    whole_page=True, 
+    username=None, 
+    password=None, 
+    clear_view=False
+    """
     output_filename = os.path.join('{}.png'.format(uuid4()))
     timeout = settings.SCREENSHOT_TIMEOUT
 
     try:
-        result = with_timeout(output_filename, webpage_url, timeout)
+        result = with_timeout(output_filename, webpage_url, timeout, **kwargs)
     except Exception as e:
         logger.error("Screenshot script raised an exception: {}".format(e))
         return e
