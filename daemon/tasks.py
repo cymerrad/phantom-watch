@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
 from django.core.files.uploadedfile import UploadedFile
 from daemon.puppet_screenshot.screenshot import with_timeout
-import datetime
+from datetime import datetime
 import logging
 import os
 import json
@@ -64,8 +64,12 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
                     pic.save()
 
     except Exception as e:
-        logger.error("Unexpected error receiving the screenshot: {}\n{}".format(e, pre_json))
-
+        msg = "Unexpected error receiving the screenshot: {}\n{}".format(e, pre_json)
+        logger.error(msg)
+        webpage_order = WebpageOrder.objects.get(id=webpage_order_id)
+        failure = FailedScreenshot(order=webpage_order, failure_date=str(datetime.now()), description=msg)
+        failure.save()
+        
     return pre_json
 
 

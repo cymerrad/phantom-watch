@@ -66,4 +66,4 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'url_addr', 'owner', 'pictures', 'crontab')
+        fields = ('id', 'created', 'url_addr', 'owner', 'pictures', 'crontab', 'failures')
