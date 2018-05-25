@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from daemon.models import WebpageOrder, Picture, FailedScreenshot
+from daemon.models import WebpageOrder, Screenshot, FailedScreenshot
 from uuid import uuid4
 from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
@@ -59,7 +59,7 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
 
                 with open(location, "rb") as fp:
                     wrapped_file = UploadedFile(fp)
-                    pic = Picture(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
+                    pic = Screenshot(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
                         description="Screenshot of {} from {}".format(webpage_url, date))
                     pic.save()
 
@@ -69,7 +69,7 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
         webpage_order = WebpageOrder.objects.get(id=webpage_order_id)
         failure = FailedScreenshot(order=webpage_order, failure_date=str(datetime.now()), description=msg)
         failure.save()
-        
+
     return pre_json
 
 

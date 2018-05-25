@@ -30,8 +30,7 @@ def scramble_uploaded_filename(instance, filename):
     extension = filename.split(".")[-1]
     return '{}.{}'.format(uuid4(), extension)
 
-# Create your models here.
-class Picture(models.Model):
+class Screenshot(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     pic = models.ImageField("Uploaded image", upload_to=scramble_uploaded_filename)
     order = models.ForeignKey('daemon.WebpageOrder', related_name='pictures', on_delete=models.CASCADE)

@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from daemon.models import Picture, WebpageOrder
+from daemon.models import Screenshot, WebpageOrder
 
 
-class PictureSerializer(serializers.ModelSerializer):
+class ScreenshotSerializer(serializers.ModelSerializer):
     """
-    Serializer for the Picture Model
+    Serializer for the Screenshot Model
     """
     class Meta:
-        model = Picture
+        model = Screenshot
         fields = ('id', 'pic', 'description', 'order')
         read_only_fields = ('original_filename', )
 
@@ -16,7 +16,7 @@ class WebpageOrderSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
     url_addr = serializers.URLField(required=True)
-    # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
+    # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Screenshot.objects.all())
     pictures = serializers.HyperlinkedIdentityField(many=True, view_name='picture-detail', format='html')
 
     def create(self, validated_data):
@@ -54,7 +54,7 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(label='ID', read_only=True)
     owner = serializers.ReadOnlyField(source='owner.username')
     url_addr = serializers.URLField(required=True)
-    # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Picture.objects.all())
+    # pictures = serializers.PrimaryKeyRelatedField(many=True, queryset=Screenshot.objects.all())
     # pictures = serializers.HyperlinkedIdentityField(many=True, view_name='picture-detail', format='html')
 
     def create(self, validated_data):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rest_framework import mixins, generics
-from daemon.models import Picture, WebpageOrder
-from daemon.serializers import PictureSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, WebpageOrderDetailSerializer
+from daemon.models import Screenshot, WebpageOrder
+from daemon.serializers import ScreenshotSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, WebpageOrderDetailSerializer
 from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
@@ -12,12 +12,12 @@ from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from django.shortcuts import render, redirect
 
-class PictureViewSet(viewsets.ReadOnlyModelViewSet):
+class ScreenshotViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Retrieve pictures
     """
-    queryset = Picture.objects.all()
-    serializer_class = PictureSerializer
+    queryset = Screenshot.objects.all()
+    serializer_class = ScreenshotSerializer
 
 class WebpageList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,

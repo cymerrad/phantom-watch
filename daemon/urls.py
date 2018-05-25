@@ -5,7 +5,7 @@ from rest_framework import routers
 
 app_name='daemon'
 router = routers.DefaultRouter()
-router.register(r'pictures', views_d.PictureViewSet)
+router.register(r'screenshots', views_d.ScreenshotViewSet)
 
 urlpatterns = [
     url(r'^webpages/$', views_d.WebpageList.as_view(), name='webpage-list'),
