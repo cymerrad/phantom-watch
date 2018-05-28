@@ -16,17 +16,16 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 
 1. ~~Postawić minimalne api do zarządzania treścią bazy danych~~
 1. ~~Zrobić daemona do robienia screenshotów używającego tego co już kiedyś napisałem~~
-    - ~~PhantomJS w repo lub instalacja gdzieś~~
     - ~~Celery~~
-    - Puppeteer
+    - ~~Puppeteer~~
 1. Front
 1. ~~CAS~~
-1. Django production settings
-1. OK permissions system
+1. ~~Django production settings~~
+1. ~~OK permissions system~~
 1. Ansible
 1. ~~Puppeteer~~
     - obejście wkurzających pop-upów na niektórych stronach (ostrzeżenie o cookies lub promocje)
-    - pre-zdefiniowane widoki (jak z telefonu komórkowego czy tableta)
+    - ~~pre-zdefiniowane widoki (jak z telefonu komórkowego czy tableta)~~
 1. Pozbyć się brandingu DRF z /api/
 
 ## Start-up
