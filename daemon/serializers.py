@@ -80,7 +80,7 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
         return WebpageOrder.objects.create(**validated_data)
 
     def get_screenshots_count(self, obj):
-        return obj.screenshots.count() if obj.is_whole_type() else obj.screenshots_batch.count()
+        return max(obj.screenshots.count(), obj.screenshots_batch.count())
 
     class Meta:
         model = WebpageOrder
