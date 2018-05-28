@@ -61,13 +61,13 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
         """
         return WebpageOrder.objects.create(**validated_data)
 
-    def get_pictures_count(self, obj):
-        return obj.pictures.count()
+    def get_screenshots_count(self, obj):
+        return obj.screenshots.count()
 
     class Meta:
         model = WebpageOrder
         depth = 0
-        fields = ('id', 'self_url', 'created', 'target_url', 'owner', 'pictures_count', 'crontab', 
+        fields = ('id', 'self_url', 'created', 'target_url', 'owner', 'screenshots_count', 'crontab', 
             'shot_type', 'resolution', 'username', 'password', 'clear_view')
 
 
@@ -114,5 +114,5 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'target_url', 'owner', 'pictures', 'crontab', 'failures',
+        fields = ('id', 'created', 'target_url', 'owner', 'screenshots', 'crontab', 'failures',
             'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')

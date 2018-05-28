@@ -33,7 +33,7 @@ def scramble_uploaded_filename(instance, filename):
 class Screenshot(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     pic = models.ImageField("Uploaded image", upload_to=scramble_uploaded_filename)
-    order = models.ForeignKey('daemon.WebpageOrder', related_name='pictures', on_delete=models.CASCADE)
+    order = models.ForeignKey('daemon.WebpageOrder', related_name='screenshots', on_delete=models.CASCADE)
     original_filename = models.TextField("Original filename", default="")
     description = models.TextField("Description of the uploaded image", default="")
 
@@ -88,8 +88,8 @@ class WebpageOrder(models.Model):
     shot_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default=WHOLE)
     resolution = models.CharField(max_length=20, choices=RESOLUTION_CHOICES, default=RESOLUTION_DEFAULT)
     clear_view = models.BooleanField(default=False)
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
+    username = models.CharField(max_length=50, default="")
+    password = models.CharField(max_length=50, default="")
 
     def save(self, *args, **kwargs):
         """
