@@ -5,7 +5,7 @@ from django.shortcuts import reverse
 
 logger = logging.getLogger('django')
 
-class ScreenshotSerializer(serializers.HyperlinkedModelSerializer):
+class ScreenshotSerializer(serializers.ModelSerializer):
     """
     Serializer for the Screenshot Model
     """
@@ -18,10 +18,9 @@ class ScreenshotBatchParentSerializer(serializers.ModelSerializer):
     """
     Serializer for the ScreenshotBatchParent Model
     """
-    self_url = serializers.HyperlinkedIdentityField(view_name='daemon:screenshotbatchparent-detail', format='html')
     class Meta:
         model = ScreenshotBatchParent
-        fields = ('id', 'self_url', 'children', 'description', 'order')
+        fields = ('id', 'children', 'description', 'order')
         depth = 1
 
 class ScreenshotBatchChildSerializer(serializers.ModelSerializer):
@@ -100,6 +99,8 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False, help_text='Password to be used for logging in.', initial=None, style={'input_type': 'password'})
     credentials = serializers.SerializerMethodField()
     clear_credentials = serializers.BooleanField(help_text='Delete stored credentials?', initial=False, write_only=True)
+    screenshots_batch = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='daemon:screenshot_batch-detail')
+
 
     def create(self, validated_data):
         """
