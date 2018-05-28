@@ -142,6 +142,10 @@ class WebpageOrder(models.Model):
         sch.terminate()
         super(WebpageOrder, self).delete(*args, **kwargs)
 
+    def is_whole_type(self):
+        if self.shot_type is WebpageOrder.WHOLE:
+            return True
+        return False
     
     class Meta:
         ordering = ('created',) 

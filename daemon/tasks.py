@@ -110,6 +110,5 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
         failure = FailedScreenshot(order=webpage_order, failure_date=str(datetime.now()), description=msg)
         failure.save()
 
-    return pre_json
 
 
