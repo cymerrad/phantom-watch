@@ -1,17 +1,36 @@
 from rest_framework import serializers
-from daemon.models import Screenshot, WebpageOrder
+from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchChild, ScreenshotBatchParent
 import logging
 from django.shortcuts import reverse
 
 logger = logging.getLogger('django')
 
-class ScreenshotSerializer(serializers.ModelSerializer):
+class ScreenshotSerializer(serializers.HyperlinkedModelSerializer):
     """
     Serializer for the Screenshot Model
     """
     class Meta:
         model = Screenshot
         fields = ('id', 'pic', 'description', 'order')
+        read_only_fields = ('original_filename', )
+
+class ScreenshotBatchParentSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ScreenshotBatchParent Model
+    """
+    self_url = serializers.HyperlinkedIdentityField(view_name='daemon:screenshotbatchparent-detail', format='html')
+    class Meta:
+        model = ScreenshotBatchParent
+        fields = ('id', 'self_url', 'children', 'description', 'order')
+        depth = 1
+
+class ScreenshotBatchChildSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the ScreenshotBatchChild Model
+    """
+    class Meta:
+        model = ScreenshotBatchChild
+        fields = ('id', 'pic', 'description')
         read_only_fields = ('original_filename', )
 
 
@@ -42,8 +61,8 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, initial=WebpageOrder.WHOLE)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, initial=WebpageOrder.RESOLUTION_DEFAULT)
     clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.', initial=False)
-    username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.')
-    password = serializers.CharField(write_only=True, required=False, help_text='Did you expect an API view to hide passwords?')
+    username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.', initial=None)
+    password = serializers.CharField(write_only=True, required=False, help_text='Password to be used for logging in.', initial=None, style={'input_type': 'password'})
 
     def validate(self, data):
         """
@@ -77,8 +96,8 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
     clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.')
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, read_only=True)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, read_only=True)
-    username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.')
-    password = serializers.CharField(write_only=True, required=False, help_text='Did you expect an API view to hide passwords?')
+    username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.', initial=None)
+    password = serializers.CharField(write_only=True, required=False, help_text='Password to be used for logging in.', initial=None, style={'input_type': 'password'})
     credentials = serializers.SerializerMethodField()
     clear_credentials = serializers.BooleanField(help_text='Delete stored credentials?', initial=False, write_only=True)
 
@@ -99,7 +118,6 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
         """
         We have to receive both username and password or neither of them
         """
-        logger.info(data)
         if ('username' in data.keys()) ^ ('password' in data.keys()):
             raise serializers.ValidationError("Cannot provide username without password or vice-versa")
 
@@ -110,8 +128,10 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
             return True
         return False
 
+
+
     class Meta:
         model = WebpageOrder
         depth = 1
-        fields = ('id', 'created', 'target_url', 'owner', 'screenshots', 'crontab', 'failures',
+        fields = ('id', 'created', 'target_url', 'owner', 'screenshots', 'screenshots_batch', 'crontab', 'failures',
             'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')

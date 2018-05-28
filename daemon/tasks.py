@@ -1,7 +1,7 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
-from daemon.models import WebpageOrder, Screenshot, FailedScreenshot
+from daemon.models import WebpageOrder, Screenshot, FailedScreenshot, ScreenshotBatchParent, ScreenshotBatchChild
 from uuid import uuid4
 from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
@@ -15,7 +15,7 @@ import json
 logger = logging.getLogger('django')
 
 @shared_task
-def take_screenshot(webpage_url, webpage_order_id, **kwargs):
+def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
     """
     kwargs:
     dimensions=None, 
@@ -28,7 +28,7 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
     timeout = settings.SCREENSHOT_TIMEOUT
 
     try:
-        result = with_timeout(output_filename, webpage_url, timeout, **kwargs)
+        result = with_timeout(output_filename, webpage_url, timeout, whole_page=whole_page, **kwargs)
     except Exception as e:
         logger.error("Screenshot script raised an exception: {}".format(e))
         return e
@@ -46,7 +46,11 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
 
         webpage_order = WebpageOrder.objects.get(id=webpage_order_id)
 
-        for screen in output_info:
+        # WHOLE_PAGE
+        if whole_page:
+            assert len(output_info) == 1
+            screen = output_info[0]
+
             try: 
                 err = screen['error']
                 try:
@@ -63,14 +67,42 @@ def take_screenshot(webpage_url, webpage_order_id, **kwargs):
                     date = screen['datetime']
                 except KeyError:
                     logger.error("Complete failure of the system. Screenshot output: {}".format(pre_json))
-                    continue
 
                 with open(location, "rb") as fp:
                     wrapped_file = UploadedFile(fp)
                     pic = Screenshot(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
                         description="Screenshot of {} from {}".format(webpage_url, date))
                     pic.save()
+        # PARTED_PAGE
+        else:
+            desc = "Batch of screenshots containing {} elements.".format(len(output_info))
+            parent = ScreenshotBatchParent.objects.create(order=webpage_order, description=desc)
 
+            for screen in output_info:
+                try: 
+                    err = screen['error']
+                    try:
+                        date = screen['datetime']
+                    except KeyError:
+                        date = "This failed too?"
+                    failure = FailedScreenshot(order=webpage_order, failure_date=date, description=err)
+                    failure.save()
+
+                # so this is okay, as it means no error!
+                except KeyError as e:
+                    try:
+                        location = screen['location']
+                        date = screen['datetime']
+                    except KeyError:
+                        logger.error("Complete failure of the system. Screenshot output: {}".format(pre_json))
+                        continue
+
+                    with open(location, "rb") as fp:
+                        wrapped_file = UploadedFile(fp)
+                        pic = ScreenshotBatchChild(pic=wrapped_file, parent=parent, original_filename=output_filename,
+                            description="Screenshot of {} from {}".format(webpage_url, date))
+                        pic.save()
+            
     except Exception as e:
         msg = "Unexpected error receiving the screenshot: {}\n{}".format(e, pre_json)
         logger.error(msg)

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rest_framework import mixins, generics
-from daemon.models import Screenshot, WebpageOrder
-from daemon.serializers import ScreenshotSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, WebpageOrderDetailSerializer
+from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchParent
+from daemon.serializers import ScreenshotSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, WebpageOrderDetailSerializer, ScreenshotBatchParentSerializer
 from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
@@ -18,6 +18,14 @@ class ScreenshotViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Screenshot.objects.all()
     serializer_class = ScreenshotSerializer
+
+class ScreenshotBatchViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Retrieve pictures
+    """
+    queryset = ScreenshotBatchParent.objects.all()
+    serializer_class = ScreenshotBatchParentSerializer
+
 
 class WebpageList(mixins.ListModelMixin,
                   mixins.CreateModelMixin,

@@ -51,6 +51,24 @@ def parse_crontab(ctab: str):
     spl = ctab.split(' ')
     return {'minute':spl[0], 'hour':spl[1], 'day_of_month':spl[2], 'month_of_year':spl[3], 'day_of_week':spl[4]}
 
+class ScreenshotBatchParent(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    order = models.ForeignKey('daemon.WebpageOrder', related_name='screenshots_batch', on_delete=models.CASCADE)
+    description = models.TextField("Parent of many single child screenshots", default="")
+
+    class Meta:
+        ordering = ('created',) 
+
+class ScreenshotBatchChild(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    pic = models.ImageField("Uploaded image", upload_to=scramble_uploaded_filename)
+    parent = models.ForeignKey(ScreenshotBatchParent, related_name='children', on_delete=models.CASCADE)
+    original_filename = models.TextField("Original filename", default="")
+    description = models.TextField("Description of the uploaded image", default="")
+
+    class Meta:
+        ordering = ('created',) 
+
 class FailedScreenshot(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     order = models.ForeignKey('daemon.WebpageOrder', related_name='failures', on_delete=models.CASCADE)
@@ -103,10 +121,18 @@ class WebpageOrder(models.Model):
                 sch = self.schedule
                 sch.terminate()
 
+            whole_page = True if self.shot_type == WebpageOrder.WHOLE else False
+
             self.schedule = TaskScheduler.schedule_cron(
                 task_name='daemon.tasks.take_screenshot', 
                 crontable=self.crontab, 
-                args=[self.target_url, self.pk],
+                args=[self.target_url, self.pk, whole_page],
+                kwargs={
+                    "dimensions": self.resolution,
+                    "username": self.username,
+                    "password": self.password,
+                    "clear_view": True if self.clear_view else False,
+                }
             )
             super(WebpageOrder, self).save(*args, **kwargs)
 
@@ -166,10 +192,9 @@ class TaskScheduler(models.Model):
             crontab=schedule,
             name=ptask_name,
             task=task_name,
-            args=json.dumps([args[0], args[1]]),
+            args=json.dumps([x for x in args]),
+            kwargs=json.dumps(dict(kwargs))
         )
-        if kwargs:
-            ptask.kwargs = kwargs
         ptask.save()
         return TaskScheduler.objects.create(periodic_task=ptask)
 
