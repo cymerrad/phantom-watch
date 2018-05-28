@@ -58,10 +58,6 @@ sudo dpkg -i /tmp/esl-erlang.deb
 sudo dpkg -i /tmp/rabbitmq.deb
 sudo apt --fix-broken -y install
 
-# deprecated
-# curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 -o /tmp/phantomjs.tar.bz2
-# tar -xf /tmp/phantomjs.tar.bz2 -C daemon/webscreenshot/
-
 cd daemon/puppet_screenshot
 curl -L https://nodejs.org/dist/v8.11.2/node-v8.11.2-linux-x64.tar.xz -o /tmp/node-v8.11.2-linux-x64.tar.xz
 sudo tar -xf /tmp/node-v8.11.2-linux-x64.tar.xz -C /opt/
