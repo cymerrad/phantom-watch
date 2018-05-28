@@ -7,6 +7,7 @@ import os
 import subprocess
 import errno
 from django.conf import settings
+import sys
 
 # Macros
 SHELL_EXECUTION_OK = 0

@@ -168,7 +168,7 @@ SCREENSHOTS_DIRECTORY = '/tmp/'
 NODEJS = "node"
 SCREENSHOT_JS = os.path.join(BASE_DIR, 'daemon/puppet_screenshot/screenshot.js')
 SCREENSHOTS_DIR = '/tmp/screenshots'
-SCREENSHOT_TIMEOUT = 30
+SCREENSHOT_TIMEOUT = 90
 
 # DRF
 REST_FRAMEWORK = {
