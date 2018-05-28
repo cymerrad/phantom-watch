@@ -64,6 +64,7 @@ sudo ln -s /opt/node-v8.11.2-linux-x64/bin/npm /usr/bin/npm
 sudo ln -s /opt/node-v8.11.2-linux-x64/bin/node /usr/bin/nodejs
 sudo ln -s /opt/node-v8.11.2-linux-x64/bin/node /usr/bin/node
 npm i
+sudo apt install chromium-browser
 cd -
 
 python manage.py makemigrations service

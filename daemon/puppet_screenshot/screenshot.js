@@ -48,6 +48,7 @@ async function getSettings() {
     wholePage : argv.whole ? true : false,
     tryToGetClearView : argv.clear ? true : false,
     pages : (argv._.length > 0) ? argv._ : (()=>{throw "no pages to screenshot"}),
+    debug : argv.debug ? true : false,
   }
   return set;
 }
@@ -213,7 +214,14 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
   }
 
   // init browser
-  const browser = await puppeteer.launch();
+  let args = {}
+  if (argv.debug) {
+    args = {
+      headless: false,
+    }
+  }
+  const browser = await puppeteer.launch(args);
+
 
   // one explicitly named or all other cases
   if (pages.length == 1 && output) {
@@ -235,7 +243,7 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     results.push(finished);
   } else {
     results = await Promise.all(
-      pages.map(p=>screenshotPage(browser, p.href, dimensions, path.format({dir: outputDirectory, base: `${_.replace(p.hostname, /\./, '_')}_${rfc3339()}`}), whole))
+      pages.map(p=>screenshotPage(browser, p.href, dimensions, path.format({dir: outputDirectory, base: `${_.replace(p.hostname, /\./g, '_')}_${rfc3339()}`}), whole))
     )
   }
   
