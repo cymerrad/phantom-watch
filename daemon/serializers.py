@@ -38,7 +38,7 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
     self_url = serializers.HyperlinkedIdentityField(view_name='daemon:webpage-detail', format='html')
     owner = serializers.ReadOnlyField(source='owner.username')
     target_url = serializers.URLField(required=True)
-    pictures_count = serializers.SerializerMethodField()
+    screenshots_count = serializers.SerializerMethodField()
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, initial=WebpageOrder.WHOLE)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, initial=WebpageOrder.RESOLUTION_DEFAULT)
     clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.', initial=False)
@@ -49,7 +49,6 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
         """
         We have to receive both username and password or neither of them
         """
-        logger.info(data)
         if ('username' in data.keys()) ^ ('password' in data.keys()):
             raise serializers.ValidationError("Cannot provide username without password or vice-versa")
 
