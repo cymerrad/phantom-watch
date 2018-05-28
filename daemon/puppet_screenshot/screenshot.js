@@ -213,11 +213,17 @@ async function screenshotPage(browser, pageUrl, dimensions, output, whole) {
     return 1;
   }
 
+  const antiCookies = 'ublock';
+
   // init browser
   let args = {}
   if (argv.debug) {
     args = {
       headless: false,
+      args: [
+        '--disable-extensions-except=./'+antiCookies,
+        '--load-extension=./'+antiCookies,
+      ]
     }
   }
   const browser = await puppeteer.launch(args);
