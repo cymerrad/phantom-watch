@@ -135,18 +135,35 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
         fields = ('id', 'created', 'target_url', 'owner', 'screenshots', 'screenshots_batch', 'crontab', 'failures',
             'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')
 
-class WebpageOrderDetailZipBatchSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ScreenshotBatchParent
-        fields = ('id', 'description', 'order',)
-        read_only_fields = ('description', 'order',)
-        depth = 0
 
 class WebpageOrderDetailZipSerializer(serializers.ModelSerializer):
+    screenshot_ranges = serializers.CharField(write_only=True, required=False)
+    all_screenshots = serializers.BooleanField(write_only=True, default=False)
+
+    def create(self, validated_data):
+        """
+        Create new task for zipping the screenshots, given the validated data.
+        """
+        return "order taken"
+
+class WebpageOrderDetailZipBatchSerializer(WebpageOrderDetailZipSerializer):
+    screenshot_list = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=ScreenshotBatchParent.objects.all()),
+        write_only=True,
+    )
 
     class Meta:
-        model = Screenshot
-        fields = ('id', 'description', 'order',)
+        fields = ('id', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
         read_only_fields = ('description', 'order',)
-        depth = 0
+        model = ScreenshotBatchParent
+
+class WebpageOrderDetailZipWholeSerializer(WebpageOrderDetailZipSerializer):
+    screenshot_list = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Screenshot.objects.all()),
+        write_only=True,
+    )
+
+    class Meta:
+        fields = ('id', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
+        read_only_fields = ('description', 'order',)
+        model = Screenshot

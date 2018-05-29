@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from rest_framework import mixins, generics
 from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchParent
 from daemon.serializers import ScreenshotSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, \
-    WebpageOrderDetailSerializer, ScreenshotBatchParentSerializer, WebpageOrderDetailZipSerializer, WebpageOrderDetailZipBatchSerializer
+    WebpageOrderDetailSerializer, ScreenshotBatchParentSerializer, WebpageOrderDetailZipWholeSerializer, WebpageOrderDetailZipBatchSerializer
 from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
@@ -77,7 +77,7 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
         webpage_pk = self.kwargs['pk']
         webpage = WebpageOrder.objects.all().filter(pk=webpage_pk).first()
         if webpage.shot_type == WebpageOrder.WHOLE:
-            return WebpageOrderDetailZipSerializer
+            return WebpageOrderDetailZipWholeSerializer
         else:
             return WebpageOrderDetailZipBatchSerializer
 
