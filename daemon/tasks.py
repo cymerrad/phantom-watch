@@ -110,5 +110,19 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
         failure = FailedScreenshot(order=webpage_order, failure_date=str(datetime.now()), description=msg)
         failure.save()
 
+@shared_task
+def zip_screenshots(zipping_order_id, **kwargs):
+    """
+    screenshot_ranges = models.TextField(blank=True)
+    screenshot_list = models.TextField(blank=True)
+    all_screenshots = models.BooleanField(default=False)
+    """
+
+    # TODO
+
+    # convert given data into list of files we need to zip
+    # webpageorder's pk from zippingorder
+    # do some queries, it'll be fine
 
 
+    return

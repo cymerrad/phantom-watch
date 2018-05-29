@@ -202,6 +202,12 @@ class TaskScheduler(models.Model):
         ptask.save()
         return TaskScheduler.objects.create(periodic_task=ptask)
 
+    @staticmethod
+    def schedule_once(task_name, when, args, kwargs):
+        """
+        Schedules the task to be done only once (when)
+        """
+
 
     def stop(self):
         """pauses the task"""
@@ -226,7 +232,6 @@ class ZippingOrder(models.Model):
     expiration_date = models.DateTimeField(blank=False)
     owner = models.ForeignKey('auth.User', related_name='zipping_orders', on_delete=models.CASCADE)
     order = models.ForeignKey(WebpageOrder, related_name='zipping_orders', on_delete=models.CASCADE)
-    screenshot_ids = models.TextField(blank=False)
     download_url = models.URLField(blank=True)
     screenshot_ranges = models.TextField(blank=True)
     screenshot_list = models.TextField(blank=True)
@@ -239,7 +244,14 @@ class ZippingOrder(models.Model):
     def save(self, owner, order, *args, **kwargs):
         self.full_clean()
 
-        screenshot_ids = [0] # gotta calcumalate 'em
+        #TODO
+        #expiration_date = created + settings.ZIP_FILE_EXPIRATION in hours
+
+        # celery execute zipping job now
+
+        # register deleting zip file in a day
+
+        
 
         super(ZippingOrder, self).save(*args, owner=owner, order=order, **kwargs)
 
