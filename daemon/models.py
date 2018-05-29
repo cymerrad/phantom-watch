@@ -143,7 +143,7 @@ class WebpageOrder(models.Model):
         super(WebpageOrder, self).delete(*args, **kwargs)
 
     def is_whole_type(self):
-        if self.shot_type is WebpageOrder.WHOLE:
+        if self.shot_type == WebpageOrder.WHOLE:
             return True
         return False
     

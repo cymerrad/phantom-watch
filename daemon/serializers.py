@@ -129,10 +129,24 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
             return True
         return False
 
-
-
     class Meta:
         model = WebpageOrder
         depth = 1
         fields = ('id', 'created', 'target_url', 'owner', 'screenshots', 'screenshots_batch', 'crontab', 'failures',
             'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')
+
+class WebpageOrderDetailZipBatchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ScreenshotBatchParent
+        fields = ('id', 'description', 'order',)
+        read_only_fields = ('description', 'order',)
+        depth = 0
+
+class WebpageOrderDetailZipSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Screenshot
+        fields = ('id', 'description', 'order',)
+        read_only_fields = ('description', 'order',)
+        depth = 0
