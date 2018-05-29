@@ -220,3 +220,21 @@ class TaskScheduler(models.Model):
         ptask = self.periodic_task
         self.delete()
         ptask.delete()
+
+class ZippingOrder(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('auth.User', related_name='zipping_orders', on_delete=models.CASCADE)
+    screenshot_ids = models.TextField(blank=True)
+    download_url = models.URLField(blank=True)
+    screenshot_ranges = models.TextField(blank=True)
+    screenshot_list = models.TextField(blank=True)
+    all_screenshots = models.BooleanField(default=False)
+
+    # @classmethod
+    # def create(cls, title):
+    #     book = cls(title=title)
+    #     # do something with the book
+    #     return book
+
+    class Meta:
+        ordering = ('created',) 

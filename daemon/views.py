@@ -8,7 +8,7 @@ from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import viewsets, renderers
+from rest_framework import viewsets, renderers, status
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from django.shortcuts import render, redirect
@@ -72,7 +72,8 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
     """
     Retrieve some of webpages' screenshots in zip form
     """
-   
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
     def get_serializer_class(self):
         webpage_pk = self.kwargs['pk']
         webpage = WebpageOrder.objects.all().filter(pk=webpage_pk).first()
@@ -97,6 +98,13 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
             queryset = queryset.filter(pk__in=ids)
 
         return queryset
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=self.request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 def almost_index(request):
     return redirect("/index")

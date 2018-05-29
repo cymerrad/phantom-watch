@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchChild, ScreenshotBatchParent
+from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchChild, ScreenshotBatchParent, ZippingOrder
 import logging
 from django.shortcuts import reverse
 from django.core.exceptions import ValidationError
@@ -157,7 +157,7 @@ class WebpageOrderDetailZipSerializer(serializers.ModelSerializer):
         """
         Create new task for zipping the screenshots, given the validated data.
         """
-        return "order taken"
+        return ZippingOrder.objects.create(**validated_data)
 
 class WebpageOrderDetailZipBatchSerializer(WebpageOrderDetailZipSerializer):
     screenshot_list = serializers.ListField(
@@ -166,7 +166,7 @@ class WebpageOrderDetailZipBatchSerializer(WebpageOrderDetailZipSerializer):
     )
 
     class Meta:
-        fields = ('id', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
+        fields = ('id', 'created', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
         read_only_fields = ('description', 'order',)
         model = ScreenshotBatchParent
 
@@ -177,6 +177,6 @@ class WebpageOrderDetailZipWholeSerializer(WebpageOrderDetailZipSerializer):
     )
 
     class Meta:
-        fields = ('id', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
+        fields = ('id', 'created', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
         read_only_fields = ('description', 'order',)
         model = Screenshot
