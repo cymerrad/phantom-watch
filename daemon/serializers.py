@@ -2,6 +2,9 @@ from rest_framework import serializers
 from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchChild, ScreenshotBatchParent
 import logging
 from django.shortcuts import reverse
+from django.core.exceptions import ValidationError
+import re
+from django.utils.translation import gettext_lazy as _
 
 logger = logging.getLogger('django')
 
@@ -136,8 +139,18 @@ class WebpageOrderDetailSerializer(serializers.ModelSerializer):
             'shot_type', 'resolution', 'username', 'password', 'clear_view', 'clear_credentials', 'credentials')
 
 
+SCREENSHOT_RANGES_REGEXP = r'^((?:[, ]*)((\d+-\d+)|\d+)(?:[, ]*))+$'
+scr_ranges_re = re.compile(SCREENSHOT_RANGES_REGEXP)
+def validate_screenshot_ranges(input):
+    if not scr_ranges_re.match(input):
+        raise ValidationError(
+            _('%(value)s is not a valid range list'),
+            params={'value': input},
+        )
+
 class WebpageOrderDetailZipSerializer(serializers.ModelSerializer):
-    screenshot_ranges = serializers.CharField(write_only=True, required=False)
+    screenshot_ranges = serializers.CharField(write_only=True, required=False, validators=[validate_screenshot_ranges],
+        help_text="E.g. '1-15,17,18,19,21-100' for omitting 16 and 20 in a very weird way. Commas and spaces inbetween don't matter.")
     all_screenshots = serializers.BooleanField(write_only=True, default=False)
 
     def create(self, validated_data):
