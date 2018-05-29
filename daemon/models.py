@@ -223,18 +223,25 @@ class TaskScheduler(models.Model):
 
 class ZippingOrder(models.Model):
     created = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField(blank=False)
     owner = models.ForeignKey('auth.User', related_name='zipping_orders', on_delete=models.CASCADE)
-    screenshot_ids = models.TextField(blank=True)
+    order = models.ForeignKey(WebpageOrder, related_name='zipping_orders', on_delete=models.CASCADE)
+    screenshot_ids = models.TextField(blank=False)
     download_url = models.URLField(blank=True)
     screenshot_ranges = models.TextField(blank=True)
     screenshot_list = models.TextField(blank=True)
     all_screenshots = models.BooleanField(default=False)
 
-    # @classmethod
-    # def create(cls, title):
-    #     book = cls(title=title)
-    #     # do something with the book
-    #     return book
+    def clean(self, *args, **kwargs):
+        # add custom validation here
+        super(ZippingOrder, self).clean(*args, **kwargs)
+
+    def save(self, owner, order, *args, **kwargs):
+        self.full_clean()
+
+        screenshot_ids = [0] # gotta calcumalate 'em
+
+        super(ZippingOrder, self).save(*args, owner=owner, order=order, **kwargs)
 
     class Meta:
         ordering = ('created',) 

@@ -75,6 +75,9 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
     def get_serializer_class(self):
+        """
+        Variable serializer depending on one webpage field
+        """
         webpage_pk = self.kwargs['pk']
         webpage = WebpageOrder.objects.all().filter(pk=webpage_pk).first()
         if webpage.shot_type == WebpageOrder.WHOLE:
@@ -83,6 +86,9 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
             return WebpageOrderDetailZipBatchSerializer
 
     def get_queryset(self):
+        """
+        Filtering results to get only those related to the webpage
+        """
         webpage_pk = self.kwargs['pk']
         webpage = WebpageOrder.objects.all().filter(pk=webpage_pk).first()
 
@@ -102,7 +108,7 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user, order=self.kwargs['pk'])
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
