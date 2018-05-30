@@ -18,7 +18,8 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import URLValidator
 import daemon.tasks
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
+logger = logging.getLogger('django')
 
 def scramble_uploaded_filename(instance, filename):
     """
@@ -164,7 +165,7 @@ class TaskScheduler(models.Model):
     periodic_task = models.ForeignKey(PeriodicTask, on_delete=models.PROTECT)
 
     @staticmethod
-    def schedule_every(task_name, period, every, args=None, kwargs=None):
+    def schedule_every(task_name, period, every, args=[], kwargs={}):
         """ schedules a task by name every "every" "period". So an example call would be:
             TaskScheduler('seconds', 'mycustomtask', 30, [1,2,3]) 
             that would schedule your custom task to run every 30 seconds with the arguments 1,2 and 3 passed to the actual task. 
@@ -191,7 +192,7 @@ class TaskScheduler(models.Model):
         return TaskScheduler.objects.create(periodic_task=ptask)
 
     @staticmethod
-    def schedule_cron(task_name, crontable, args=None, kwargs=None):
+    def schedule_cron(task_name, crontable, args=[], kwargs={}):
         """
         Schedules a task using UNIX cron table. E.g. "* * * * *" is every minute, "0 * * * *" every hour with 0 minutes.
         Idk, google it or read a manual for it.
@@ -252,21 +253,20 @@ class ZippingOrder(models.Model):
         # add custom validation here
         super(ZippingOrder, self).clean(*args, **kwargs)
 
-    def save(self, owner, order, *args, **kwargs):
-        self.full_clean()
+    def save(self, *args, **kwargs):
 
         #TODO
         # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
         exp_date = (datetime.now() + timedelta(minutes=1))
         self.expiration_date = exp_date.isoformat().replace('T', ' ')
-
-        super(ZippingOrder, self).save(*args, owner=owner, order=order, **kwargs)
-        # now we have a pk
+        self.full_clean()
+        super(ZippingOrder, self).save(*args, **kwargs)
+        # we now have a pk
 
         crontab = datetime_2_crontab(exp_date)
 
         # celery execute zipping job now
-        daemon.tasks.zip_screenshots.delay(pk)
+        daemon.tasks.zip_screenshots.delay(self.pk)
 
         # register deleting the zip file in a day
         TaskScheduler.schedule_cron(
