@@ -23,7 +23,6 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
     """
     kwargs:
     dimensions=None, 
-    whole_page=True, 
     username=None, 
     password=None, 
     clear_view=False
@@ -119,14 +118,29 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
 
 
 @shared_task
-def zip_screenshots(zipping_order_id, **kwargs):
+def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], all_screenshots=False):
     """
     screenshot_ranges = models.TextField(blank=True)
     screenshot_list = models.TextField(blank=True)
     all_screenshots = models.BooleanField(default=False)
     """
+    zipping_order = daemon.models.ZippingOrder.objects.get(id=zipping_order_id)
+    webpage_order = zipping_order.order
+    shot_type = webpage_order.shot_type
+    if shot_type == daemon.models.WebpageOrder.WHOLE:
+        screenshots = webpage_order.screenshots
+    else:
+        screenshots = webpage_order.screenshots_batch
 
-    # TODO
+    if all_screenshots:
+        return true_zip_screenshots(zipping_order)
+
+    if len(screenshot_list) > 0:
+        screenshots = screenshots.filter(pk__in=screenshot_list)
+
+    screenshot_ranges_parsed = parse_screenshot_ranges(screenshots_ranges)
+    if len(screenshot_ranges_parsed) > 0:
+        screenshots = screenshots.filter(pk__in=screenshot_ranges_parsed)
 
     logger.info("Processing {}".format(zipping_order_id))
     sleep(5)
@@ -135,6 +149,16 @@ def zip_screenshots(zipping_order_id, **kwargs):
     # webpageorder's pk from zippingorder
     # do some queries, it'll be fine
 
+def parse_screenshot_ranges(ranges):
+    ranges = [x.strip(' ,') for x in ranges.strip(' ,').split(',') if x]
+    ranges = [x.split('-') for x in ranges if x]
+    valid_ranges = [x for x in ranges if x[0]<=x[1]]
+
+    # TODO
+
+    return []
+
+def true_zip_screenshots(zipping_order, screenshots):
 
     return SUCCESS
 
