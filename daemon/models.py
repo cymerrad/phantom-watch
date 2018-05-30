@@ -12,6 +12,7 @@ from celery.schedules import crontab
 from django_celery_beat.models import PeriodicTask, CrontabSchedule, IntervalSchedule
 import json
 from datetime import datetime, timedelta
+from django.utils import timezone
 from croniter import croniter
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -255,11 +256,12 @@ class ZippingOrder(models.Model):
 
     def save(self, *args, **kwargs):
 
-        #TODO
+        #FIXME
         # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
         exp_date = (datetime.now() + timedelta(minutes=1))
-        self.expiration_date = exp_date.isoformat().replace('T', ' ')
+        self.expiration_date = timezone.make_aware(exp_date)
         self.full_clean()
+        
         super(ZippingOrder, self).save(*args, **kwargs)
         # we now have a pk
 

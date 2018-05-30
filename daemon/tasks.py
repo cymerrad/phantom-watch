@@ -144,7 +144,7 @@ def delete_file(zipping_order_id):
     # TODO
     zipping_order = daemon.models.ZippingOrder.objects.get(id=zipping_order_id)
 
-    logger.info("Deleting file {}".format(zipping_order_id.zip_file))
+    logger.info("Deleting file {}".format(zipping_order.zip_file))
     sleep(2)
 
     # delete self?
