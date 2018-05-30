@@ -27,6 +27,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - obejście wkurzających pop-upów na niektórych stronach (ostrzeżenie o cookies lub promocje)
     - ~~pre-zdefiniowane widoki (jak z telefonu komórkowego czy tableta)~~
 1. Pozbyć się brandingu DRF z /api/
+1. https://pypi.org/project/django_celery_results/
 
 ## Start-up
 

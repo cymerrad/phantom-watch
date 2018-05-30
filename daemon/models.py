@@ -16,7 +16,7 @@ from croniter import croniter
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import URLValidator
-
+import daemon.tasks
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +50,15 @@ def validate_crontab(ctab: str):
 def parse_crontab(ctab: str):
     spl = ctab.split(' ')
     return {'minute':spl[0], 'hour':spl[1], 'day_of_month':spl[2], 'month_of_year':spl[3], 'day_of_week':spl[4]}
+
+def datetime_2_crontab(dtime: datetime):
+    return "{M} {H} {d} {m} {w}".format(
+        M = dtime.minute,
+        H = dtime.hour,
+        d = dtime.day,
+        m = dtime.month,
+        w = '*'
+    )
 
 class ScreenshotBatchParent(models.Model):
     created = models.DateTimeField(auto_now_add=True)
@@ -182,7 +191,7 @@ class TaskScheduler(models.Model):
         return TaskScheduler.objects.create(periodic_task=ptask)
 
     @staticmethod
-    def schedule_cron(task_name, crontable, args, kwargs=None):
+    def schedule_cron(task_name, crontable, args=None, kwargs=None):
         """
         Schedules a task using UNIX cron table. E.g. "* * * * *" is every minute, "0 * * * *" every hour with 0 minutes.
         Idk, google it or read a manual for it.
@@ -227,11 +236,13 @@ class TaskScheduler(models.Model):
         self.delete()
         ptask.delete()
 
+
 class ZippingOrder(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     expiration_date = models.DateTimeField(blank=False)
     owner = models.ForeignKey('auth.User', related_name='zipping_orders', on_delete=models.CASCADE)
     order = models.ForeignKey(WebpageOrder, related_name='zipping_orders', on_delete=models.CASCADE)
+    zip_file = models.FileField(blank=True)
     download_url = models.URLField(blank=True)
     screenshot_ranges = models.TextField(blank=True)
     screenshot_list = models.TextField(blank=True)
@@ -245,15 +256,25 @@ class ZippingOrder(models.Model):
         self.full_clean()
 
         #TODO
-        #expiration_date = created + settings.ZIP_FILE_EXPIRATION in hours
-
-        # celery execute zipping job now
-
-        # register deleting zip file in a day
-
-        
+        # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
+        exp_date = (datetime.now() + timedelta(minutes=1))
+        self.expiration_date = exp_date.isoformat().replace('T', ' ')
 
         super(ZippingOrder, self).save(*args, owner=owner, order=order, **kwargs)
+        # now we have a pk
+
+        crontab = datetime_2_crontab(exp_date)
+
+        # celery execute zipping job now
+        daemon.tasks.zip_screenshots.delay(pk)
+
+        # register deleting the zip file in a day
+        TaskScheduler.schedule_cron(
+            task_name='daemon.tasks.delete_file', 
+            crontable=crontab, 
+            args=[self.pk],
+        )
+
 
     class Meta:
         ordering = ('created',) 
