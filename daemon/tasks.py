@@ -150,13 +150,46 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
     # do some queries, it'll be fine
 
 def parse_screenshot_ranges(ranges):
+    # split by commas if not null
     ranges = [x.strip(' ,') for x in ranges.strip(' ,').split(',') if x]
+
+    # split by dashes if not null
     ranges = [x.split('-') for x in ranges if x]
-    valid_ranges = [x for x in ranges if x[0]<=x[1]]
+
+    # omit incorrect ranges (e.g. 9-6), then convert strings to integers
+    valid = [[int(y) for y in x] for x in ranges if (len(x) == 2 and int(x[0])<=int(x[1])) or len(x) == 1]
+    if valid == []:
+        return range(0)
+
+    # join all overlapping ranges
+    valid.sort()
+
+    joined = [valid[0] if len(valid[0]) == 2 else [valid[0][0], valid[0][0]]]
+    for cur in valid:
+        last = joined[-1]
+        if len(cur) == 1:
+            if cur[0] <= last[1] + 1:
+                # overlap or extend
+                last[1] = max(last[1], cur[0])
+            else:
+                # new range
+                joined.append([cur[0], cur[0]])
+        else:
+            if cur[0] <= last[1] + 1:
+                # overlap or extend
+                last[1] = max(last[1], cur[1])
+            else:
+                # new range
+                joined.append(cur)
 
     # TODO
+    # what if we get some gigantic number and proceed to iterating over them all?
 
-    return []
+    # yield
+    for r in joined:
+        for x in range(r[0], r[1] + 1):
+            yield x
+
 
 def true_zip_screenshots(zipping_order, screenshots):
 
