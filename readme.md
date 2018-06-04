@@ -21,7 +21,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
 1. Front
 1. ~~CAS~~
 1. ~~Django production settings~~
-1. ~~OK permissions system~~
+1. OK permissions system
 1. Ansible
 1. ~~Puppeteer~~
     - obejście wkurzających pop-upów na niektórych stronach (ostrzeżenie o cookies lub promocje)
