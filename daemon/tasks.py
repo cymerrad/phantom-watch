@@ -240,7 +240,7 @@ def true_zip_screenshots(zipping_order, screenshots, whole):
             for batch in screenshots.all():
                 cpfiles += [CPFILE(s2.pic.file.name, tmpdir / remove_prefix(s2.original_filename)) for s2 in batch.children.all()]
 
-        zip_filename_wo_extension = pathlib.Path(tempfile.tempdir) / "zip_screenshots_{oid}_{date}".format(
+        zip_filename_wo_extension = pathlib.Path(tempfile.tempdir) / "screenshots_{oid}_{date}".format(
             oid=zipping_order.id, 
             date=datetime.now().isoformat(),
         )
@@ -263,10 +263,15 @@ def true_zip_screenshots(zipping_order, screenshots, whole):
 @shared_task
 def delete_file(zipping_order_id):
 
-    # TODO
     zipping_order = daemon.models.ZippingOrder.objects.get(id=zipping_order_id)
 
-    logger.info("Deleting file {}".format(zipping_order.zip_file))
-    sleep(2)
+    logger.info("Deleting order {} with file {}".format(zipping_order, zipping_order.zip_file))
+    
+    # file on disk
+    filename = zipping_order.zip_file.file.name
+    file_p = pathlib.Path(filename)
+    file_p.unlink()
 
-    # delete self?
+    # from database
+    zipping_order.delete()
+

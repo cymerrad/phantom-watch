@@ -258,10 +258,7 @@ class ZippingOrder(models.Model):
 
         if self.pk is None:
             # first save
-
-            #FIXME
-            # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
-            exp_date = (datetime.now() + timedelta(minutes=1))
+            exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
             self.expiration_date = timezone.make_aware(exp_date)
             self.full_clean()
             
