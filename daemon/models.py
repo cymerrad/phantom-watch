@@ -256,26 +256,31 @@ class ZippingOrder(models.Model):
 
     def save(self, *args, **kwargs):
 
-        #FIXME
-        # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
-        exp_date = (datetime.now() + timedelta(minutes=1))
-        self.expiration_date = timezone.make_aware(exp_date)
-        self.full_clean()
-        
-        super(ZippingOrder, self).save(*args, **kwargs)
-        # we now have a pk
+        if self.pk is None:
+            # first save
 
-        crontab = datetime_2_crontab(exp_date)
+            #FIXME
+            # exp_date = (datetime.now() + timedelta(hours=settings.ZIP_FILE_EXPIRATION))
+            exp_date = (datetime.now() + timedelta(minutes=1))
+            self.expiration_date = timezone.make_aware(exp_date)
+            self.full_clean()
+            
+            super(ZippingOrder, self).save(*args, **kwargs)
+            # we now have a pk
 
-        # celery execute zipping job now
-        daemon.tasks.zip_screenshots.delay(self.pk, self.screenshot_ranges, self.screenshot_list, self.all_screenshots)
+            crontab = datetime_2_crontab(exp_date)
 
-        # register deleting the zip file in a day
-        TaskScheduler.schedule_cron(
-            task_name='daemon.tasks.delete_file', 
-            crontable=crontab, 
-            args=[self.pk],
-        )
+            # celery execute zipping job now
+            daemon.tasks.zip_screenshots.delay(self.pk, self.screenshot_ranges, self.screenshot_list, self.all_screenshots)
+
+            # register deleting the zip file in a day
+            TaskScheduler.schedule_cron(
+                task_name='daemon.tasks.delete_file', 
+                crontable=crontab, 
+                args=[self.pk],
+            )
+        else:
+            return super(ZippingOrder, self).save(*args, **kwargs)
 
 
     class Meta:

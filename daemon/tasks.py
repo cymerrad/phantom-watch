@@ -12,6 +12,10 @@ import os
 import json
 from time import sleep
 from urllib.parse import urlparse
+from collections import namedtuple
+import tempfile
+import pathlib
+import shutil
 
 logger = logging.getLogger('django')
 
@@ -147,17 +151,31 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
 
     logger.debug("Processing {}".format(zipping_order))
 
-    if all_screenshots:
-        return true_zip_screenshots(zipping_order, screenshots, whole)
+    if not all_screenshots:
+        if screenshot_list:
+            screenshots = screenshots.filter(pk__in=parse_screenshot_list(screenshot_list))
 
-    if len(screenshot_list) > 0:
-        screenshots = screenshots.filter(pk__in=screenshot_list)
-
-    screenshots = screenshots.filter(pk__in=parse_screenshot_ranges(screenshot_ranges))
+        if screenshot_ranges:
+            screenshots = screenshots.filter(pk__in=parse_screenshot_ranges(screenshot_ranges))
 
     logger.debug("Screenshots {}".format(screenshots))
 
-    return true_zip_screenshots(zipping_order, screenshots, whole)
+    try:
+        zip_file = true_zip_screenshots(zipping_order, screenshots, whole)
+
+        with open(zip_file, 'rb') as f_zip:
+            wrapped_file = UploadedFile(f_zip)
+            zipping_order.zip_file = wrapped_file
+            zipping_order.save()
+        
+    except Exception as e:
+        logger.error("Zipping failed: {}".format(e))
+        return FAILURE
+
+    return SUCCESS
+        
+def parse_screenshot_list(str_list):
+    return json.loads(str_list)
 
 def parse_screenshot_ranges(ranges):
     """
@@ -205,13 +223,42 @@ def parse_screenshot_ranges(ranges):
 
 
 def true_zip_screenshots(zipping_order, screenshots, whole):
-    filenames = []
-    if whole:
-        filenames = []
-    else:
-        pass
+    CPFILE = namedtuple('CPFile', ['current', 'post'])
 
-    return SUCCESS
+    def remove_prefix(filename: str):
+        if filename.startswith(settings.SCREENSHOTS_DIR):
+            return filename[len(settings.SCREENSHOTS_DIR)].lstrip('/')
+        return filename
+
+    with tempfile.TemporaryDirectory(prefix='zip_screenshots') as tmpdir_p:
+        tmpdir = pathlib.Path(tmpdir_p)
+        
+        cpfiles = []
+        if whole:
+            cpfiles = [CPFILE(s1.pic.file.name, tmpdir / remove_prefix(s1.original_filename)) for s1 in screenshots.all()]
+        else:
+            for batch in screenshots.all():
+                cpfiles += [CPFILE(s2.pic.file.name, tmpdir / remove_prefix(s2.original_filename)) for s2 in batch.children.all()]
+
+        zip_filename_wo_extension = pathlib.Path(tempfile.tempdir) / "zip_screenshots_{oid}_{date}".format(
+            oid=zipping_order.id, 
+            date=datetime.now().isoformat(),
+        )
+
+        needed_dirs = set()
+        for cpfile in cpfiles:
+            needed_dirs.add(cpfile.post.parent)
+
+        for d in needed_dirs:
+            d.mkdir(parents=True, exist_ok=True)
+
+        for cpfile in cpfiles:
+            shutil.copy(cpfile.current, cpfile.post.as_posix())
+
+        logger.info("Output archive: {}.zip".format(zip_filename_wo_extension))
+
+        return shutil.make_archive(zip_filename_wo_extension.as_posix(), 'zip', tmpdir.as_posix())
+
 
 @shared_task
 def delete_file(zipping_order_id):

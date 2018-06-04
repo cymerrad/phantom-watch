@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         depth = 1
-        fields = ('id', 'username', 'orders')
+        fields = ('id', 'username', 'orders', 'zipping_orders')
 
 
 class GroupSerializer(serializers.ModelSerializer):
