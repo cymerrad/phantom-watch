@@ -2,7 +2,6 @@
 from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 import daemon.models
-from uuid import uuid4
 from django.conf import settings
 from django.core.files.images import ImageFile as DjangoImage
 from django.core.files.uploadedfile import UploadedFile
@@ -12,6 +11,7 @@ import logging
 import os
 import json
 from time import sleep
+from urllib.parse import urlparse
 
 logger = logging.getLogger('django')
 
@@ -27,7 +27,14 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
     password=None, 
     clear_view=False
     """
-    output_filename = os.path.join('{}.png'.format(uuid4()))
+    parsed_url = urlparse(webpage_url)
+    output_filename = os.path.join(
+        '{oid}_{wurl}_{date}.png'.format(
+            oid=webpage_order_id, 
+            wurl=(lambda h: h.replace('.', '_'))(parsed_url.hostname), 
+            date=datetime.now().isoformat(),
+        ),
+    )
     timeout = settings.SCREENSHOT_TIMEOUT
 
     try:
@@ -73,7 +80,7 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
 
                 with open(location, "rb") as fp:
                     wrapped_file = UploadedFile(fp)
-                    pic = daemon.models.Screenshot(pic=wrapped_file, order=webpage_order, original_filename=output_filename,
+                    pic = daemon.models.Screenshot(pic=wrapped_file, order=webpage_order, original_filename=location,
                         description="daemon.models.Screenshot of {} from {}".format(webpage_url, date))
                     pic.save()
         # PARTED_PAGE
@@ -102,7 +109,7 @@ def take_screenshot(webpage_url, webpage_order_id, whole_page, **kwargs):
 
                     with open(location, "rb") as fp:
                         wrapped_file = UploadedFile(fp)
-                        pic = daemon.models.ScreenshotBatchChild(pic=wrapped_file, parent=parent, original_filename=output_filename,
+                        pic = daemon.models.ScreenshotBatchChild(pic=wrapped_file, parent=parent, original_filename=location,
                             description="daemon.models.Screenshot of {} from {}".format(webpage_url, date))
                         pic.save()
             
@@ -125,33 +132,37 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
     all_screenshots = models.BooleanField(default=False)
     """
 
-    logger.info("Got ranges {} list {} all {}".format(screenshot_ranges, screenshot_list, all_screenshots))
+    logger.debug("Got ranges {} list {} all {}".format(screenshot_ranges, screenshot_list, all_screenshots))
 
     zipping_order = daemon.models.ZippingOrder.objects.get(id=zipping_order_id)
     webpage_order = zipping_order.order
     shot_type = webpage_order.shot_type
+    whole = False
     if shot_type == daemon.models.WebpageOrder.WHOLE:
         screenshots = webpage_order.screenshots
+        whole = True
     else:
         screenshots = webpage_order.screenshots_batch
+        whole = False
 
-    logger.info("Processing {}".format(zipping_order))
+    logger.debug("Processing {}".format(zipping_order))
 
     if all_screenshots:
-        return true_zip_screenshots(zipping_order)
+        return true_zip_screenshots(zipping_order, screenshots, whole)
 
     if len(screenshot_list) > 0:
         screenshots = screenshots.filter(pk__in=screenshot_list)
 
     screenshots = screenshots.filter(pk__in=parse_screenshot_ranges(screenshot_ranges))
 
-    logger.info("Screenshots {}".format(screenshots))
+    logger.debug("Screenshots {}".format(screenshots))
 
-    # convert given data into list of files we need to zip
-    # webpageorder's pk from zippingorder
-    # do some queries, it'll be fine
+    return true_zip_screenshots(zipping_order, screenshots, whole)
 
 def parse_screenshot_ranges(ranges):
+    """
+    Returns an iterator over the given stringly typed ranges.
+    """
     # split by commas if not null
     ranges = [x.strip(' ,') for x in ranges.strip(' ,').split(',') if x]
 
@@ -193,7 +204,12 @@ def parse_screenshot_ranges(ranges):
             yield x
 
 
-def true_zip_screenshots(zipping_order, screenshots):
+def true_zip_screenshots(zipping_order, screenshots, whole):
+    filenames = []
+    if whole:
+        filenames = []
+    else:
+        pass
 
     return SUCCESS
 
