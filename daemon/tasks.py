@@ -124,6 +124,9 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
     screenshot_list = models.TextField(blank=True)
     all_screenshots = models.BooleanField(default=False)
     """
+
+    logger.info("Got ranges {} list {} all {}".format(screenshot_ranges, screenshot_list, all_screenshots))
+
     zipping_order = daemon.models.ZippingOrder.objects.get(id=zipping_order_id)
     webpage_order = zipping_order.order
     shot_type = webpage_order.shot_type
@@ -132,18 +135,17 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
     else:
         screenshots = webpage_order.screenshots_batch
 
+    logger.info("Processing {}".format(zipping_order))
+
     if all_screenshots:
         return true_zip_screenshots(zipping_order)
 
     if len(screenshot_list) > 0:
         screenshots = screenshots.filter(pk__in=screenshot_list)
 
-    screenshot_ranges_parsed = parse_screenshot_ranges(screenshots_ranges)
-    if len(screenshot_ranges_parsed) > 0:
-        screenshots = screenshots.filter(pk__in=screenshot_ranges_parsed)
+    screenshots = screenshots.filter(pk__in=parse_screenshot_ranges(screenshot_ranges))
 
-    logger.info("Processing {}".format(zipping_order_id))
-    sleep(5)
+    logger.info("Screenshots {}".format(screenshots))
 
     # convert given data into list of files we need to zip
     # webpageorder's pk from zippingorder

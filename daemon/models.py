@@ -268,7 +268,7 @@ class ZippingOrder(models.Model):
         crontab = datetime_2_crontab(exp_date)
 
         # celery execute zipping job now
-        daemon.tasks.zip_screenshots.delay(self.pk)
+        daemon.tasks.zip_screenshots.delay(self.pk, self.screenshot_ranges, self.screenshot_list, self.all_screenshots)
 
         # register deleting the zip file in a day
         TaskScheduler.schedule_cron(
