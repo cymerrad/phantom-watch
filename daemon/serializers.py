@@ -62,7 +62,7 @@ class WebpageOrderListSerializer(serializers.ModelSerializer):
     screenshots_count = serializers.SerializerMethodField()
     shot_type = serializers.ChoiceField(choices=WebpageOrder.TYPE_CHOICES, initial=WebpageOrder.WHOLE)
     resolution = serializers.ChoiceField(choices=WebpageOrder.RESOLUTION_CHOICES, initial=WebpageOrder.RESOLUTION_DEFAULT)
-    clear_view = serializers.BooleanField(help_text='I will try to get past those iritating ads or cookie reminders.', initial=False)
+    clear_view = serializers.BooleanField(help_text='I will try to get past those irritating ads or cookie reminders.', initial=False)
     username = serializers.CharField(write_only=True, required=False, help_text='Username to be used for logging in to the site.', initial=None)
     password = serializers.CharField(write_only=True, required=False, help_text='Password to be used for logging in.', initial=None, style={'input_type': 'password'})
 
