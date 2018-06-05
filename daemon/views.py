@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from rest_framework import mixins, generics
-from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchParent
+from daemon.models import Screenshot, WebpageOrder, ScreenshotBatchParent, ZippingOrder
 from daemon.serializers import ScreenshotSerializer, WebpageOrderSerializer, WebpageOrderListSerializer, \
-    WebpageOrderDetailSerializer, ScreenshotBatchParentSerializer, WebpageOrderDetailZipWholeSerializer, WebpageOrderDetailZipBatchSerializer
+    WebpageOrderDetailSerializer, ScreenshotBatchParentSerializer, WebpageOrderDetailZipWholeSerializer, \
+    WebpageOrderDetailZipBatchSerializer, ZippingOrderSerializer
 from rest_framework import mixins, generics, permissions, renderers
 from daemon.permissions import IsOwnerOrReadOnly
 from rest_framework.response import Response
@@ -113,11 +114,24 @@ class WebpageDetailZip(generics.ListAPIView, generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
+class ZippingOrderViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Finished and pending zipping orders. When they meet their expiration date, database entry along with data is deleted.
+    """
+    queryset = ZippingOrder.objects.all()
+    serializer_class = ZippingOrderSerializer
+
 def almost_index(request):
-    return redirect("/index")
+    return redirect("/index2")
 
 def index(request):
     if request.user.is_authenticated:
         return render(request, 'daemon/index.jinja', context={'user':request.user, 'request':request})
     else:
         return render(request, 'daemon/index.jinja', context={'request':request})
+
+def index2(request):
+    if request.user.is_authenticated:
+        return render(request, 'daemon/index2.jinja', context={'user':request.user, 'request':request})
+    else:
+        return render(request, 'daemon/index2.jinja', context={'request':request})

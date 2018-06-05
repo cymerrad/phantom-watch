@@ -1,14 +1,11 @@
 {% extends 'daemon/base.jinja' %}
 {% block content %}
-<div class="container">
-<p>Jak na razie udostępniam korzystanie z serwisu tylko bezpośrednio przez API.</p>
-<p>Całe szczęście Django Rest Framework daje całkiem przyjemny sposób na testowanie owego API.</p>
-<p>Bez problemu daje się dodać żądanie do śledzenia strony, ale trochę gorzej z odzyskaniem efektów pracy: dopiero jak front będzie gotowy
-to stworzę możliwość spakowania screenshotów do zipa i pobranie ich wszystkich naraz.</p>
-<p>Teraz można je oglądać tylko klikając ręcznie w linki jak plebs.</p>
-<br>
-<p>Zatem zapraszam do <a href="{{ url('daemon:webpage-list') }}">{{ url('daemon:webpage-list') }}</a>
-
+<div class='container-fluid'>
+    <div class='jumbotron'>
+        <h1>Under construction</h1>
+        <blockquote class='text-right'>"Z tego nic nie będzie, choć powstanie."
+        <footer>Lech Roch Pawlak</footer></blockquote>
+    </div>
+    <p><a href="{{ url('front:help') }}">HELP</a></p>
 </div>
-    
 {% endblock %}

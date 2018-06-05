@@ -245,10 +245,11 @@ class ZippingOrder(models.Model):
     owner = models.ForeignKey('auth.User', related_name='zipping_orders', on_delete=models.CASCADE)
     order = models.ForeignKey(WebpageOrder, related_name='zipping_orders', on_delete=models.CASCADE)
     zip_file = models.FileField(blank=True)
-    download_url = models.URLField(blank=True)
     screenshot_ranges = models.TextField(blank=True)
     screenshot_list = models.TextField(blank=True)
     all_screenshots = models.BooleanField(default=False)
+    finished = models.BooleanField(default=False)
+    error = models.TextField(blank=True)
 
     def clean(self, *args, **kwargs):
         # add custom validation here

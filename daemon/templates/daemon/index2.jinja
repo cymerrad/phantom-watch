@@ -1,0 +1,20 @@
+{% extends 'daemon/base.jinja' %}
+{% block content %}
+<div class="container">
+<p>Jak na razie udostępniam korzystanie z serwisu tylko bezpośrednio przez API.</p>
+<p>Całe szczęście Django Rest Framework daje całkiem przyjemny sposób na testowanie owego API.</p>
+<p>Bez problemu daje się dodać żądanie do śledzenia strony i pobrać skompresowane pliki w formacie .zip</p>
+<p>Gdzie to było wygodne to dodałem pole "self_url", które zawiera gotowy link do obiektu.</p>
+<br>
+<p>Aby je pobrać należy dodać na końcu adresu zgłoszenia WebpageOrder "/zip". 
+Np.: <a href="{{ url('daemon:webpage-list') }}1/zip">{{ url('daemon:webpage-list') }}1/zip</a></p>
+<p>Po wybraniu/wpisaniu interesujacych nas screenshotów i wysłaniu ich w żądaniu POST, stworzone zostanie zgłoszenie zzipowania plików. 
+Gdy ono się skończy, w obiekcie typu ZippingOrder pojawi się link do pobrania. Do tego obiektu można dostać się poprzez 
+<a href="{{ url('user-list') }}">{{ url('user-list') }}</a> lub <a href="{{ url('daemon:zipping_order-list') }}">{{ url('daemon:zipping_order-list') }}</a>.</p>
+<br>
+<p>Zatem zapraszam do <a href="{{ url('daemon:webpage-list') }}">{{ url('daemon:webpage-list') }}</a>.</p>
+<p>Należy być zalogowanym aby móc dodawać nowe linki!</p>
+
+</div>
+    
+{% endblock %}

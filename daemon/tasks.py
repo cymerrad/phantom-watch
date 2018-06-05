@@ -166,10 +166,14 @@ def zip_screenshots(zipping_order_id, screenshot_ranges='', screenshot_list=[], 
         with open(zip_file, 'rb') as f_zip:
             wrapped_file = UploadedFile(f_zip)
             zipping_order.zip_file = wrapped_file
+            zipping_order.finished = True
             zipping_order.save()
         
     except Exception as e:
         logger.error("Zipping failed: {}".format(e))
+        zipping_order.finished = True
+        zipping_order.error = str(e)
+        zipping_order.save()
         return FAILURE
 
     return SUCCESS

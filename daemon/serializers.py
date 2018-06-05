@@ -180,3 +180,11 @@ class WebpageOrderDetailZipWholeSerializer(WebpageOrderDetailZipSerializer):
         fields = ('id', 'created', 'description', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges')
         read_only_fields = ('description', 'order',)
         model = Screenshot
+
+class ZippingOrderSerializer(serializers.ModelSerializer):
+    self_url = serializers.HyperlinkedIdentityField(view_name='daemon:zipping_order-detail', format='html')
+
+    class Meta:
+        fields = ('id', 'self_url', 'created', 'order', 'screenshot_list', 'all_screenshots', 'screenshot_ranges', 'zip_file', 'error', 'finished')
+        read_only_fields = ('description', 'order',)
+        model = ZippingOrder

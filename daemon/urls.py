@@ -22,6 +22,7 @@ class ExtendableRouter(routers.DefaultRouter):
 router = ExtendableRouter()
 router.register(r'screenshots', views_d.ScreenshotViewSet)
 router.register(r'screenshots_batch', views_d.ScreenshotBatchViewSet, base_name='screenshot_batch')
+router.register(r'zipping_orders', views_d.ZippingOrderViewSet, base_name='zipping_order')
 
 urlpatterns = [
     url(r'^webpages/$', views_d.WebpageList.as_view(), name='webpage-list'),

@@ -7,5 +7,6 @@ from daemon import views
 app_name = 'front'
 urlpatterns = format_suffix_patterns([
     url(r'^$', views.almost_index),
-    url(r'^index', views.index),
+    url(r'^index$', views.index, name='home'),
+    url(r'^index2$', views.index2, name='help'),
 ])
