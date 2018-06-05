@@ -1,0 +1,1 @@
+sudo docker stop $( sudo docker ps | awk '$2 ~ /mysql.*/ { print $1 }' )
