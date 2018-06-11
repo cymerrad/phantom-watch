@@ -16,6 +16,7 @@ from collections import namedtuple
 import tempfile
 import pathlib
 import shutil
+from celery.exceptions import TimeLimitExceeded
 
 logger = logging.getLogger('django')
 

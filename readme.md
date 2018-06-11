@@ -28,6 +28,7 @@ Tym razem celem jest śledzenie tego jak zmieniają się strony Uniwersytetu War
     - ~~pre-zdefiniowane widoki (jak z telefonu komórkowego czy tableta)~~
 1. Pozbyć się brandingu DRF z /api/
 1. https://pypi.org/project/django_celery_results/
+1. http://docs.celeryproject.org/en/latest/userguide/workers.html
 
 ## Start-up
 
